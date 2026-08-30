@@ -390,3 +390,50 @@ Dentro ci sono aiuti, coppe, avatar rari, temi speciali e sempre una **scoperta*
 Sono le curiosità e i trucchetti che trovi nelle casse: per studiare, per fare i compiti, per
 aggiustare le cose, per orientarsi, e storie di come sono state inventate. Ce ne sono 48 e si
 rileggono quando vuoi dalla tessera **Scoperte**.
+
+---
+
+## Per i genitori
+
+Questo è il foglio da mandare quando si invita un bambino a giocare. Va bene copiarlo
+in un messaggio: non è un documento legale, ed è scritto apposta perché si capisca in
+trenta secondi.
+
+> **Brain Time — cosa sapere prima di dire di sì**
+>
+> Ciao, sono il papà di Diego. Brain Time è un gioco di quiz che abbiamo costruito in
+> casa: si risponde a domande di matematica, scacchi, logica, lingue, storia e cultura
+> generale, si fanno labirinti e si impara qualche parola in lingua straniera.
+>
+> **Cosa serve per giocare:** un soprannome (non il nome vero) e l'età. L'età serve solo
+> a scegliere le domande giuste — a un bambino di 8 anni non tocca il programma di seconda
+> media. Non chiediamo la data di nascita, il cognome, l'indirizzo, il telefono o l'email.
+>
+> **Cosa si salva:** soprannome, età, il personaggio scelto, i punti, le coppe, quante
+> domande sono state fatte e quante giuste. Nient'altro.
+>
+> **Cosa NON c'è, per scelta:**
+> - **nessuna chat e nessun messaggio.** Nel gioco non si scrive: si vede solo la classifica.
+> - **nessuna foto.**
+> - **nessuna pubblicità** e nessun acquisto: le "coppe" si guadagnano giocando e non si
+>   comprano con soldi veri.
+> - **nessuno sconosciuto:** si entra solo su invito.
+>
+> **Chi vede cosa:** i bambini invitati vedono il soprannome, il personaggio e i punti
+> degli altri, come in una classifica di classe. Nient'altro.
+>
+> **Per cancellare tutto:** dentro il gioco, Impostazioni → *I tuoi dati* → «Cancella il
+> mio profilo». Sparisce subito, anche dalla classifica. Oppure scrivetemi e lo faccio io.
+>
+> **Dove sono i dati:** su server in Europa. Se avete domande, o volete che tolga vostro
+> figlio in qualsiasi momento, scrivetemi.
+>
+> — [nome e contatto]
+
+### Perché è fatto così
+
+Le tre righe che contano sono «nessuna chat», «nessuna foto» e «si cancella da soli».
+Sono le prime cose che un genitore si chiede, e rispondere prima che le chieda è quello
+che fa dire di sì. Il resto — età invece della data di nascita, invito invece di
+iscrizione libera — serve a far sì che, anche se qualcosa andasse storto, non ci sia
+nulla di identificabile da perdere.
