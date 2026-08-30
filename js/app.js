@@ -1398,8 +1398,24 @@
     });
 
     /* --- labirinti: croce direzionale, dita e tastiera --- */
+    /* Le frecce si possono TENERE PREMUTE: si cammina finche' non si lascia.
+       Si usa pointerdown/up cosi' vale per dito, mouse e penna insieme. */
     document.querySelectorAll('.dpad button').forEach(function (b) {
-      b.onclick = function () { BT.laby.muovi(b.dataset.dir); };
+      var dir = b.dataset.dir;
+      function giu(e) { e.preventDefault(); BT.laby.premi(dir); }
+      function su() { BT.laby.rilascia(dir); }
+      if (window.PointerEvent) {
+        b.addEventListener('pointerdown', giu);
+        b.addEventListener('pointerup', su);
+        b.addEventListener('pointercancel', su);
+        b.addEventListener('pointerleave', su);
+      } else {
+        b.addEventListener('touchstart', giu, { passive: false });
+        b.addEventListener('touchend', su);
+        b.addEventListener('mousedown', giu);
+        b.addEventListener('mouseup', su);
+        b.addEventListener('mouseleave', su);
+      }
     });
     document.getElementById('lingua-esci').onclick = function () {
       BT.lingue.abbandona();
@@ -1440,7 +1456,15 @@
                   w: 'n', s: 's', a: 'w', d: 'e' }[e.key];
       if (!dir) return;
       e.preventDefault();
-      BT.laby.muovi(dir);
+      /* il tasto tenuto giu' ripete da solo: qui si tiene la direzione,
+         il ritmo dei passi lo decide il labirinto */
+      BT.laby.premi(dir);
+    });
+
+    document.addEventListener('keyup', function (e) {
+      var dir = { ArrowUp: 'n', ArrowDown: 's', ArrowLeft: 'w', ArrowRight: 'e',
+                  w: 'n', s: 's', a: 'w', d: 'e' }[e.key];
+      if (dir) BT.laby.rilascia(dir);
     });
 
     /* scorciatoie da tastiera: 1-4 per rispondere, invio per andare avanti */

@@ -782,3 +782,48 @@ disabilitato (URL `data:`). Due conseguenze quando si collauda: lo stato si accu
 e l'altra, e soprattutto **il giocatore da usare nei test e' `BT.storeOnline.io()`**, non uno creato
 al volo con `store.create`: `renderMenu` lavora sulla variabile `player`, e con due oggetti diversi
 i controlli sulle casse sembrano rotti quando non lo sono.
+
+---
+
+# I labirinti si guidano col dito (30/08/2026)
+
+Cinque richieste insieme, tutte sullo stesso schermo.
+
+## La faccia al posto della pallina
+`L.faccia` e' `player.avatar`. Se e' una foto (data URI) va **caricata prima** in
+`preparaFaccia()`: al primo disegno un `Image` appena creato non ha ancora niente
+dentro. Emoji: `fillText`. Foto: `clip()` tondo + `drawImage`. Sotto c'e' sempre un
+disco del colore della carta, se no la faccia si confonde coi muri.
+
+## Due orologi diversi, di proposito
+- **Il disegno** va a `requestAnimationFrame` e si ferma da solo quando non c'e' piu'
+  niente da muovere (`fermo()`): su un telefono tenere acceso un ciclo inutile costa batteria.
+- **Il ritmo dei passi** sta su un `setInterval` suo (`PASSO_MS = 125`). Non deve
+  dipendere dai fotogrammi: se no su un telefono lento si cammina piano e su un
+  computer veloce si vola.
+
+`L.vis` e' la posizione *disegnata* e insegue `L.pos` con `VELOCITA = 0.34`. Arrivando
+al traguardo `vis` viene agganciata a `pos` prima di `vinto()`, se no si vede la faccia
+scivolare mentre e' gia' comparsa la schermata del premio.
+
+> Trappola trovata collaudando: nel pannello di anteprima `requestAnimationFrame`
+> **non parte mai** perche' la pagina e' `hidden`. Se il movimento fosse stato dentro
+> il ciclo dei fotogrammi, il collaudo avrebbe detto "non si muove" e sarebbe stato
+> vero anche col telefono in tasca. Averlo separato lo ha reso robusto e collaudabile.
+
+## Tenere premuto
+`BT.laby.premi(dir)` / `BT.laby.rilascia(dir)`, usate da croce direzionale (eventi
+`pointer*`, cosi' vale per dito, mouse e penna), tastiera (`keydown`/`keyup`) e dito.
+Il tonfo contro il muro e' limitato a uno ogni 400 ms, se no tenendo premuto contro
+una parete parte una raffica.
+
+## Il dito come levetta
+`collegaGesti` non fa piu' "una strisciata = un passo" (per un labirinto 18x18 erano
+decine di strisciate). Ora: si appoggia il dito **dove si vuole** e si trascina; finche'
+resta giu' si cammina. L'origine si sposta dietro al dito a ogni cambio di asse, cosi'
+si gira senza staccare.
+
+## Il doppio tocco non ingrandisce piu'
+`body{touch-action:manipulation}` toglie lo zoom da doppio tocco lasciando lo
+scorrimento e la pinzata a due dita. Sul labirinto (`#laby-canvas`, `.dpad`)
+`touch-action:none`: li' il dito serve a guidare e il browser non deve fare nulla.

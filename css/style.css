@@ -1147,3 +1147,16 @@ body[data-tema="galassia"] .pc-b{color:#1a0f33}
      consigliato, e sul telefono ci sta senza stringere niente. */
   .icon-btn{ width:44px; height:44px }
 }
+
+/* ---------- il doppio tocco non deve ingrandire ----------
+   Sul telefono due tocchi rapidi fanno zoom: giocando capita in
+   continuazione, e mentre si risponde o si corre in un labirinto e'
+   solo un fastidio. "manipulation" toglie il doppio tocco lasciando
+   intatto lo scorrimento e la pinzata a due dita, che restano utili
+   (per esempio per guardare da vicino una scacchiera). */
+body{ touch-action:manipulation }
+
+/* Nel labirinto invece il dito serve a guidare: qui il browser non
+   deve fare niente da solo, ne' scorrere ne' ingrandire. */
+#laby-canvas, .dpad, .dpad button{ touch-action:none; user-select:none; -webkit-user-select:none }
+.dpad button{ -webkit-touch-callout:none }

@@ -102,6 +102,20 @@
     return strada;
   }
 
+  /* ---------------- la faccia del giocatore ----------------
+     L'avatar puo' essere un'emoji o una foto (data URI). L'emoji si
+     scrive sul canvas; la foto va caricata prima, se no al primo
+     disegno non c'e' ancora niente da mettere. */
+  var avatarImg = null;
+
+  function preparaFaccia(p) {
+    avatarImg = null;
+    if (!BT.isFoto(p.avatar)) return;
+    var im = new Image();
+    im.onload = function () { avatarImg = im; chiediDisegno(); };
+    im.src = p.avatar;
+  }
+
   /* ---------------- colori presi dal tema in uso ---------------- */
   function colore(nome, ripiego) {
     var v = getComputedStyle(document.body).getPropertyValue(nome);
@@ -158,14 +172,37 @@
       ctx.fillText(L.freccia, (L.pos.x + 0.5) * lato, (L.pos.y + 0.5) * lato - lato * 0.7);
     }
 
-    /* il giocatore */
+    /* Il giocatore e' la sua faccia, non una pallina: nel labirinto ci
+       sei tu. Si disegna su L.vis, la posizione "vista", che insegue
+       L.pos senza saltarci sopra: e' quello che rende il movimento
+       morbido invece che a scatti. */
+    var cx = (L.vis.x + 0.5) * lato, cy = (L.vis.y + 0.5) * lato;
+    var raggio = lato * 0.34;
+
+    /* un disco sotto: serve a staccare la faccia dal fondo e dai muri */
     ctx.beginPath();
-    ctx.fillStyle = verde;
-    ctx.arc((L.pos.x + 0.5) * lato, (L.pos.y + 0.5) * lato, lato * 0.28, 0, Math.PI * 2);
+    ctx.fillStyle = fondo;
+    ctx.arc(cx, cy, raggio, 0, Math.PI * 2);
     ctx.fill();
-    ctx.lineWidth = Math.max(1.5, lato * 0.06);
-    ctx.strokeStyle = muro;
+    ctx.lineWidth = Math.max(1.5, lato * 0.07);
+    ctx.strokeStyle = verde;
     ctx.stroke();
+
+    if (avatarImg) {
+      /* foto: ritagliata tonda dentro il disco */
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, raggio - lato * 0.05, 0, Math.PI * 2);
+      ctx.clip();
+      var d = (raggio - lato * 0.05) * 2;
+      ctx.drawImage(avatarImg, cx - d / 2, cy - d / 2, d, d);
+      ctx.restore();
+    } else {
+      ctx.font = Math.round(lato * 0.52) + 'px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(L.faccia, cx, cy + lato * 0.02);
+    }
   }
 
   /* ---------------- movimento ---------------- */
@@ -177,15 +214,90 @@
     else if (dir === 's' && !c.s) nuova.y++;
     else if (dir === 'e' && !c.e) nuova.x++;
     else if (dir === 'w' && !c.w) nuova.x--;
-    else { BT.sfx.play('tempo'); return; }          // muro: piccolo tonfo
+    else {
+      /* muro: un tonfo, ma non a raffica se si tiene premuto contro */
+      var ora = adesso();
+      if (ora - ultimoTonfo > 400) { ultimoTonfo = ora; BT.sfx.play('tempo'); }
+      return;
+    }
 
     L.pos = nuova;
     L.mosse++;
     L.freccia = null;
     BT.sfx.play('click');
 
-    if (L.pos.x === L.uscita.x && L.pos.y === L.uscita.y) vinto();
-    else disegna();
+    if (L.pos.x === L.uscita.x && L.pos.y === L.uscita.y) {
+      L.vis.x = L.pos.x; L.vis.y = L.pos.y;   /* niente scivolata dopo il traguardo */
+      vinto();
+    } else {
+      chiediDisegno();
+    }
+  }
+
+  /* ================= movimento morbido e continuo =================
+     Tre cose insieme:
+     - la faccia scivola da una cella all'altra invece di saltare;
+     - tenendo premuto (tasto, freccia sullo schermo o dito) si continua
+       a camminare, un passo ogni PASSO_MS;
+     - il disegno gira solo quando serve davvero, se no il telefono
+       consuma batteria per stare fermo.                            */
+  var PASSO_MS = 125;       // quanto dura un passo tenendo premuto
+  var VELOCITA = 0.34;      // quanto si avvicina la faccia a ogni fotogramma
+  var tenuto = null;        // direzione tenuta premuta
+  var passoTimer = null;
+  var ultimoTonfo = 0;
+  var rafId = null;
+
+  function adesso() {
+    return (window.performance && performance.now) ? performance.now() : Date.now();
+  }
+
+  function fermo() {
+    return Math.abs(L.vis.x - L.pos.x) < 0.003 && Math.abs(L.vis.y - L.pos.y) < 0.003;
+  }
+
+  /* Il DISEGNO va a fotogrammi (fluido, e si ferma quando non serve).
+     Il RITMO DEI PASSI no: quello sta su un timer suo, perche' non deve
+     dipendere da quanti fotogrammi riesce a fare il telefono. Tenendo
+     premuto si cammina sempre allo stesso passo, su un telefono lento
+     come su un computer veloce. */
+  function giro() {
+    rafId = null;
+    if (!L || L.finita) return;
+
+    L.vis.x += (L.pos.x - L.vis.x) * VELOCITA;
+    L.vis.y += (L.pos.y - L.vis.y) * VELOCITA;
+    if (fermo()) { L.vis.x = L.pos.x; L.vis.y = L.pos.y; }
+
+    disegna();
+    if (!fermo() || L.freccia) chiediDisegno();
+  }
+
+  function chiediDisegno() {
+    if (rafId !== null || !L || L.finita) return;
+    rafId = (window.requestAnimationFrame || function (f) { return setTimeout(f, 16); })(giro);
+  }
+
+  function fermaPasso() {
+    if (passoTimer) { clearInterval(passoTimer); passoTimer = null; }
+  }
+
+  /* si comincia a tenere premuto: un passo subito, poi a ritmo */
+  function premi(dir) {
+    if (!L || L.finita || tenuto === dir) return;
+    tenuto = dir;
+    muovi(dir);
+    fermaPasso();
+    passoTimer = setInterval(function () {
+      if (!L || L.finita || !tenuto) { fermaPasso(); return; }
+      muovi(tenuto);
+    }, PASSO_MS);
+  }
+
+  function rilascia(dir) {
+    if (dir && tenuto !== dir) return;
+    tenuto = null;
+    fermaPasso();
   }
 
   /* ---------------- tempo ---------------- */
@@ -213,7 +325,7 @@
   /* ---------------- esiti ---------------- */
   function vinto() {
     L.finita = true;
-    fermaTimer();
+    fermaTimer(); fermaPasso();
     if (BT.limite) BT.limite.ferma(L.player);
     if (BT.musica) BT.musica.ferma();
     disegna();
@@ -268,7 +380,7 @@
 
   function perso() {
     L.finita = true;
-    fermaTimer();
+    fermaTimer(); fermaPasso();
     if (BT.limite) BT.limite.ferma(L.player);
     if (BT.musica) BT.musica.ferma();
     BT.sfx.play('sbagliato');
@@ -285,6 +397,8 @@
       cols: cfg.cols, rows: cfg.rows,
       celle: genera(cfg.cols, cfg.rows),
       pos: { x: 0, y: 0 },
+      vis: { x: 0, y: 0 },        /* dov'e' disegnata: insegue pos, non salta */
+      faccia: player.avatar || '🙂',
       uscita: { x: cfg.cols - 1, y: cfg.rows - 1 },
       mosse: 0, finita: false,
       tTotal: cfg.tempo, tLeft: cfg.tempo,
@@ -294,6 +408,9 @@
          esattamente come il quiz di allenamento */
       allena: !!(opzioni && opzioni.allena)
     };
+
+    tenuto = null;
+    preparaFaccia(player);
 
     BT.show('screen-laby');
 
@@ -375,6 +492,12 @@
     muovi(dir);
     if (L && !L.finita && L.bussolaRimaste > 0) setTimeout(mostraFreccia, 60);
   };
+  /* tenere premuto: si cammina finche' non si lascia */
+  BT.laby.premi = function (dir) {
+    premi(dir);
+    if (L && !L.finita && L.bussolaRimaste > 0) setTimeout(mostraFreccia, 60);
+  };
+  BT.laby.rilascia = function (dir) { rilascia(dir); };
   /* Il codice segreto: scrivendo "tele" dentro un labirinto si finisce
      dritti all'uscita. Passa il livello, ma senza premi: vedi vinto(). */
   BT.laby.teletrasporto = function () {
@@ -388,6 +511,8 @@
   };
 
   BT.laby.abbandona = function () {
+    tenuto = null;
+    fermaPasso();
     fermaTimer();
     if (BT.limite && L) BT.limite.ferma(L.player);
     if (BT.musica) BT.musica.ferma();
@@ -398,18 +523,51 @@
   BT.laby.viaLibera = function () { return L ? percorso(L.pos) : []; };
 
   /* swipe sul labirinto */
+  /* Si pilota col dito: si appoggia il dito dove si vuole sul labirinto
+     e si trascina nella direzione in cui andare. Finche' il dito resta
+     giu' si continua a camminare, e cambiando direzione si gira senza
+     staccare. E' come una levetta disegnata dove serve, invece che una
+     croce fissa in un angolo.
+     Prima era "una strisciata = un passo": per attraversare un labirinto
+     18x18 volevano dire decine di strisciate. */
   BT.laby.collegaGesti = function (el) {
-    var x0 = 0, y0 = 0;
+    var x0 = 0, y0 = 0, attivo = false;
+    var SOGLIA = 16;            // px prima di decidere che e' una direzione
+
+    function direzione(x, y) {
+      var dx = x - x0, dy = y - y0;
+      if (Math.abs(dx) < SOGLIA && Math.abs(dy) < SOGLIA) return null;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        /* l'origine si sposta dietro al dito: cosi' si puo' cambiare
+           idea senza staccare, e non serve tornare al punto di partenza */
+        y0 = y;
+        return dx > 0 ? 'e' : 'w';
+      }
+      x0 = x;
+      return dy > 0 ? 's' : 'n';
+    }
+
+    function giu(x, y) { attivo = true; x0 = x; y0 = y; }
+    function muove(x, y) {
+      if (!attivo) return;
+      var d = direzione(x, y);
+      if (d) premi(d);
+    }
+    function su() { attivo = false; rilascia(); }
+
     el.addEventListener('touchstart', function (e) {
-      var t = e.changedTouches[0]; x0 = t.clientX; y0 = t.clientY;
+      var t = e.changedTouches[0]; giu(t.clientX, t.clientY);
     }, { passive: true });
-    el.addEventListener('touchend', function (e) {
-      var t = e.changedTouches[0];
-      var dx = t.clientX - x0, dy = t.clientY - y0;
-      if (Math.abs(dx) < 18 && Math.abs(dy) < 18) return;
-      if (Math.abs(dx) > Math.abs(dy)) BT.laby.muovi(dx > 0 ? 'e' : 'w');
-      else BT.laby.muovi(dy > 0 ? 's' : 'n');
+    el.addEventListener('touchmove', function (e) {
+      var t = e.changedTouches[0]; muove(t.clientX, t.clientY);
     }, { passive: true });
+    el.addEventListener('touchend', su, { passive: true });
+    el.addEventListener('touchcancel', su, { passive: true });
+
+    /* col mouse funziona uguale: si tiene premuto e si trascina */
+    el.addEventListener('mousedown', function (e) { giu(e.clientX, e.clientY); });
+    el.addEventListener('mousemove', function (e) { muove(e.clientX, e.clientY); });
+    window.addEventListener('mouseup', su);
   };
 
 })(window.BT);
