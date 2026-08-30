@@ -6,14 +6,18 @@
    funzionare anche senza internet, come gia' fa quando si
    apre col doppio click.
 
-   Strategia: prima la copia salvata, poi la rete. Il gioco
-   non ha dati che arrivano da fuori, quindi la copia locale
-   non "invecchia" mai in modo pericoloso.
+   Strategia: PRIMA LA RETE, e la copia salvata solo se la rete
+   non c'e'. Sembra il contrario di quello che si fa di solito,
+   ed e' voluto: con "prima la copia" bastava dimenticarsi di
+   cambiare il numero di versione qui sotto e i ragazzi restavano
+   con la versione vecchia per sempre, senza modo di accorgersene.
+   E' successo davvero il 30/08/2026, con il CSS.
 
-   Quando si aggiorna il gioco va cambiata la VERSIONE qui
-   sotto: e' quello che fa buttare via la copia vecchia.
+   Il gioco pesa poche centinaia di kB e non chiama nessun server:
+   una richiesta in piu' all'avvio non si sente, mentre restare
+   indietro di una versione si sente eccome.
    ========================================================= */
-var VERSIONE = 'brain-time-2026-08-30';
+var VERSIONE = 'brain-time-2026-08-30b';
 
 var FILE = [
   './',
@@ -78,16 +82,17 @@ self.addEventListener('fetch', function (e) {
   if (new URL(r.url).origin !== self.location.origin) return;
 
   e.respondWith(
-    caches.match(r).then(function (salvata) {
-      if (salvata) return salvata;
-      return fetch(r).then(function (risposta) {
-        if (risposta && risposta.status === 200 && risposta.type === 'basic') {
-          var copia = risposta.clone();
-          caches.open(VERSIONE).then(function (c) { c.put(r, copia); });
-        }
-        return risposta;
-      }).catch(function () {
-        /* senza rete e senza copia: se e' una pagina, si torna al gioco */
+    fetch(r).then(function (risposta) {
+      /* arrivata dalla rete: si tiene da parte per quando non ci sara' */
+      if (risposta && risposta.status === 200 && risposta.type === 'basic') {
+        var copia = risposta.clone();
+        caches.open(VERSIONE).then(function (c) { c.put(r, copia); });
+      }
+      return risposta;
+    }).catch(function () {
+      /* niente rete: si gioca con la copia salvata */
+      return caches.match(r).then(function (salvata) {
+        if (salvata) return salvata;
         if (r.mode === 'navigate') return caches.match('./index.html');
         return new Response('', { status: 504, statusText: 'Non disponibile' });
       });
