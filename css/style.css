@@ -73,13 +73,30 @@ body::after{
   pointer-events:none;
 }
 
-#app{position:relative; z-index:1; max-width:760px; margin:0 auto; padding:12px 14px 46px}
+#app{
+  position:relative; z-index:1; max-width:760px; margin:0 auto;
+  padding:12px
+          calc(14px + env(safe-area-inset-right, 0px))
+          calc(46px + env(safe-area-inset-bottom, 0px))
+          calc(14px + env(safe-area-inset-left, 0px));
+}
 
 /* ---------- topbar ---------- */
+/* La barra in cima deve stare SOTTO la tacca (o isola dinamica) e sotto
+   la barra di stato: li' il telefono non passa il tocco, quindi il tasto
+   "indietro" si vedeva ma non si riusciva a premere.
+   env(safe-area-inset-*) e' lo spazio che il telefono dichiara occupato.
+   Sul computer vale 0 e non cambia niente. Dentro un'app che incornicia
+   la pagina puo' valere 0 anche col telefono, percio' piu' sotto c'e'
+   anche un margine fisso per tutti gli schermi che si toccano. */
 .topbar{
   position:sticky; top:0; z-index:5;
   display:flex; align-items:center; gap:10px;
-  max-width:760px; margin:0 auto; padding:10px 14px;
+  max-width:760px; margin:0 auto;
+  padding:calc(10px + env(safe-area-inset-top, 0px))
+          calc(14px + env(safe-area-inset-right, 0px))
+          10px
+          calc(14px + env(safe-area-inset-left, 0px));
   backdrop-filter:blur(6px);
 }
 .topbar.hidden{display:none}
@@ -107,7 +124,8 @@ body::after{
 }
 
 /* ---------- hero ---------- */
-.hero{text-align:center; padding:14px 0 18px}
+/* la home non ha la barra in cima: qui lo spazio per la tacca lo prende il logo */
+.hero{text-align:center; padding:calc(14px + env(safe-area-inset-top, 0px)) 0 18px}
 .hero-logo{display:grid;place-items:center}
 .logo-svg{width:104px;height:92px; filter:drop-shadow(0 6px 12px rgba(11,58,99,.3))}
 .lg-page,.lg-page2{fill:#fff; stroke:var(--azzurro-800); stroke-width:3.5; stroke-linejoin:round}
@@ -1115,3 +1133,17 @@ body[data-tema="galassia"] .pc-b{color:#1a0f33}
 /* --- scelta della difficolta' prima di ogni partita --- */
 .diff-scelta{display:grid; gap:12px; margin-top:14px}
 .df-card.sel{border-color:var(--oro); box-shadow:0 0 0 3px var(--oro-bordo)}
+
+/* ---------- schermi che si toccano ----------
+   Su un telefono la fascia in cima e' scomoda anche senza tacca: il
+   pollice ci arriva male e certe cornici (per esempio quando il gioco
+   sta dentro un'altra app) non dichiarano nessuna "zona sicura". Qui si
+   scende di una riga per tutti gli schermi tattili, oltre a quello che
+   il telefono dichiara. Sul computer non cambia niente. */
+@media (pointer: coarse){
+  .topbar{ padding-top:calc(22px + env(safe-area-inset-top, 0px)) }
+  .hero{ padding-top:calc(24px + env(safe-area-inset-top, 0px)) }
+  /* 38px e' sotto la misura comoda per un dito: 44px e' il minimo
+     consigliato, e sul telefono ci sta senza stringere niente. */
+  .icon-btn{ width:44px; height:44px }
+}
