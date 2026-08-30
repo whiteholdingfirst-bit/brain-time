@@ -1,0 +1,53 @@
+/* =========================================================
+   BRAIN TIME ONLINE — stili aggiuntivi
+   (si aggiungono a css/style.css)
+   ========================================================= */
+
+/* stato della condivisione */
+.sync-chip{
+  display:inline-block; margin-top:12px; padding:6px 15px; border-radius:999px;
+  font-size:13px; font-weight:600;
+}
+.sync-chip.attesa{background:rgba(255,255,255,.28); color:#fff}
+.sync-chip.ok{background:rgba(47,191,113,.9); color:#fff}
+.sync-chip.warn{background:rgba(245,184,38,.95); color:#4a3200}
+.sync-chip.off{background:rgba(255,255,255,.28); color:#fff}
+
+.topbar-player .tp-bell{
+  background:var(--rosso); color:#fff; padding:4px 10px; border-radius:999px; font-size:13px;
+}
+
+.pf-badge{
+  background:var(--rosso); color:#fff; font-size:12px; padding:2px 8px;
+  border-radius:999px; margin-left:4px; vertical-align:middle;
+}
+
+.tile-sfide{border-bottom:5px solid var(--rosso)}
+.tile-sfide.urgente{animation:pulsa 1.6s ease-in-out infinite}
+.tile-sfide.urgente .tile-sub{color:var(--rosso); font-weight:700}
+@keyframes pulsa{
+  0%,100%{box-shadow:var(--ombra-sm)}
+  50%{box-shadow:0 0 0 4px rgba(232,84,74,.28), var(--ombra-sm)}
+}
+
+.rank-row.io{outline:3px solid var(--azzurro-500); outline-offset:-3px}
+
+/* righe delle sfide */
+.sfida-row{
+  display:flex; align-items:center; gap:12px; padding:12px;
+  background:var(--carta-2); border:2px solid var(--azzurro-100);
+  border-radius:var(--r-md); margin-bottom:10px;
+}
+.sfida-row:last-child{margin-bottom:0}
+.sfida-row.vinta{background:var(--ok-bg); border-color:var(--verde)}
+.sfida-row.persa{background:var(--no-bg); border-color:var(--rosso)}
+.sf-av{font-size:30px; line-height:1; flex:none}
+.sf-info{flex:1; min-width:0}
+.sf-nome{font-weight:600; font-size:16px}
+.sf-meta{font-size:13px; color:var(--inchiostro-soft); line-height:1.45}
+.sf-btn{flex:none; padding:10px 16px; font-size:15px}
+
+@media (max-width:420px){
+  .sfida-row{flex-wrap:wrap}
+  .sf-btn{width:100%}
+}

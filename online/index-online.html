@@ -1,0 +1,371 @@
+<title>Brain Time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>/*CSS*/</style>
+
+<script id="bt-state" type="application/json">{"v":1,"players":[],"sfide":[]}</script>
+
+<!-- Brain Time: aggiornamento caratteri, avatar e foto, cultura generale, classi scolastiche, negozio a reparti -->
+<div class="bg-books" aria-hidden="true"></div>
+
+<header id="topbar" class="topbar hidden">
+  <button class="icon-btn" id="btn-back" title="Indietro">&#8592;</button>
+  <div class="brand"><span class="brand-b">Brain</span><span class="brand-t">Time</span></div>
+  <div class="topbar-player" id="topbar-player"></div>
+</header>
+
+<main id="app">
+
+  <!-- ============ HOME ============ -->
+  <section class="screen active" id="screen-home">
+    <div class="hero">
+      <div class="hero-logo">
+        <svg viewBox="0 0 120 104" class="logo-svg" aria-hidden="true">
+          <path d="M60 34c-9-9-23-11-34-7-4 1-6 4-6 8v46c0 4 4 7 8 6 10-3 22-1 32 6z" class="lg-page"/>
+          <path d="M60 34c9-9 23-11 34-7 4 1 6 4 6 8v46c0 4-4 7-8 6-10-3-22-1-32 6z" class="lg-page2"/>
+          <path d="M60 34v59" class="lg-spine"/>
+          <circle cx="60" cy="18" r="13" class="lg-brain"/>
+          <path d="M60 10v16M52 18h16" class="lg-plus"/>
+        </svg>
+      </div>
+      <h1 class="hero-title">Brain Time</h1>
+      <p class="hero-sub">Non fa i compiti al posto tuo.<br>Ti rende <b>pi&ugrave; forte</b>.</p>
+      <div class="sync-chip attesa" id="sync-chip">Collegamento&hellip;</div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Chi gioca?</h2>
+      <div id="profile-list" class="profile-list"></div>
+      <button class="btn btn-ghost btn-block" id="btn-new-profile">+ Nuovo giocatore</button>
+    </div>
+
+    <div class="card card-slim">
+      <button class="btn btn-link" id="btn-rules">Come si gioca &amp; regole</button>
+    </div>
+  </section>
+
+  <!-- ============ NUOVO PROFILO ============ -->
+  <section class="screen" id="screen-newprofile">
+    <div class="card">
+      <h2 class="card-title" id="np-titolo">Nuovo giocatore</h2>
+      <label class="lbl" for="np-name">Nome</label>
+      <input class="input" id="np-name" maxlength="14" placeholder="Es. Diego" autocomplete="off">
+      <label class="lbl">La tua faccia</label>
+      <div class="foto-zona">
+        <div class="foto-anteprima" id="np-anteprima"></div>
+        <div class="foto-azioni">
+          <button class="btn btn-ghost" id="np-scatta">&#128247; Scatta una foto</button>
+          <button class="btn btn-ghost" id="np-galleria">&#128194; Scegli dalla galleria</button>
+        </div>
+      </div>
+      <div class="cam-pannello hidden" id="np-cam">
+        <div class="cam-video-box" id="np-cam-video"></div>
+        <div class="row-btns">
+          <button class="btn btn-ghost" id="np-cam-annulla">Annulla</button>
+          <button class="btn btn-primary" id="np-cam-scatta">Scatta!</button>
+        </div>
+      </div>
+      <p class="hint" id="np-foto-msg"></p>
+
+      <label class="lbl">Oppure scegli un personaggio</label>
+      <div class="av-tabs" id="np-av-tabs"></div>
+      <div class="avatar-grid" id="np-avatars"></div>
+      <p class="av-conta" id="np-av-conta"></p>
+      <label class="lbl">Quanti anni hai?</label>
+      <div id="np-classi"></div>
+      <div class="livello-info" id="np-livello-info"></div>
+      <p class="hint" id="np-hint"></p>
+      <div class="row-btns">
+        <button class="btn btn-ghost" id="np-cancel">Annulla</button>
+        <button class="btn btn-primary" id="np-create">Crea giocatore</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MENU ============ -->
+  <section class="screen" id="screen-menu">
+    <div class="player-card" id="menu-player-card"></div>
+
+    <div class="menu-grid">
+      <button class="tile tile-gioca" data-go="gioca">
+        <span class="tile-ico">&#127942;</span>
+        <span class="tile-name">Gioca</span>
+        <span class="tile-sub">Punti in palio: se sbagli li perdi</span>
+      </button>
+      <button class="tile tile-solo" data-go="allena">
+        <span class="tile-ico">&#127891;</span>
+        <span class="tile-name">Allenamento</span>
+        <span class="tile-sub">Nessun punto in palio</span>
+      </button>
+      <button class="tile tile-sfide" data-go="sfide">
+        <span class="tile-ico">&#9876;</span>
+        <span class="tile-name">Sfida a distanza</span>
+        <span class="tile-sub" id="tile-sfide-badge">Gioca a distanza</span>
+      </button>
+      <button class="tile tile-duel" data-go="duel">
+        <span class="tile-ico">&#128241;</span>
+        <span class="tile-name">Duello locale</span>
+        <span class="tile-sub">Stesso dispositivo</span>
+      </button>
+      <button class="tile tile-shop" data-go="shop">
+        <span class="tile-ico">&#127873;</span>
+        <span class="tile-name">Negozio</span>
+        <span class="tile-sub">Compra aiuti</span>
+      </button>
+      <button class="tile tile-rank" data-go="rank">
+        <span class="tile-ico">&#127942;</span>
+        <span class="tile-name">Classifica</span>
+        <span class="tile-sub">Uguale per tutti</span>
+      </button>
+      <button class="tile tile-stats" data-go="stats">
+        <span class="tile-ico">&#128202;</span>
+        <span class="tile-name">Statistiche</span>
+        <span class="tile-sub">I tuoi punti forti</span>
+      </button>
+      <button class="tile tile-scoperte" data-go="scoperte">
+        <span class="tile-ico">&#128161;</span>
+        <span class="tile-name">Scoperte</span>
+        <span class="tile-sub" id="tile-scoperte-sub">Trovate nelle casse</span>
+      </button>
+    </div>
+
+    <div class="card card-slim">
+      <button class="btn btn-link" id="btn-change-player">Cambia giocatore</button>
+      <button class="btn btn-link" id="btn-settings">Impostazioni</button>
+    </div>
+  </section>
+
+  <!-- ============ SFIDE A DISTANZA ============ -->
+  <section class="screen" id="screen-sfide">
+    <h2 class="screen-title">Sfide a distanza</h2>
+    <div id="sfide-body"></div>
+  </section>
+
+  <section class="screen" id="screen-sfida-setup">
+    <h2 class="screen-title">Chi vuoi sfidare?</h2>
+    <div class="card">
+      <p class="hint" style="margin-top:0">Giochi subito il tuo turno. La sfida resta in attesa finch&eacute;
+      l'altro non apre il link e risponde alle stesse materie, al <b>suo</b> livello.</p>
+      <label class="lbl">Avversario</label>
+      <div class="chip-row" id="sfida-avversari"></div>
+      <button class="btn btn-primary btn-block" id="sfida-next" style="margin-top:18px">Scegli le materie</button>
+    </div>
+  </section>
+
+  <!-- ============ SCELTA CATEGORIA ============ -->
+  <section class="screen" id="screen-category">
+    <h2 class="screen-title" id="cat-title">Scegli la materia</h2>
+    <div class="cat-grid" id="cat-grid"></div>
+    <div class="card card-slim">
+      <label class="lbl">Livello di difficolt&agrave;</label>
+      <div class="seg" id="diff-seg"></div>
+      <p class="hint" id="diff-note"></p>
+      <div class="modo-box" id="cat-modo"></div>
+    </div>
+  </section>
+
+  <!-- ============ DUELLO LOCALE ============ -->
+  <section class="screen" id="screen-duel-setup">
+    <h2 class="screen-title">Duello sullo stesso dispositivo</h2>
+    <div class="card">
+      <p class="hint">Si risponde a turno: prima uno, poi l'altro, e solo dopo si scopre com'&egrave; andata.</p>
+      <label class="lbl">Sfidante 1</label>
+      <div class="chip-row" id="duel-p1"></div>
+      <label class="lbl">Sfidante 2</label>
+      <div class="chip-row" id="duel-p2"></div>
+      <div class="warn-box"><b>Regola d'oro:</b> chi guarda non parla. Niente suggerimenti dai genitori
+      (o da chiunque altro) durante il turno di un altro giocatore.</div>
+      <button class="btn btn-primary btn-block" id="duel-next">Scegli le materie</button>
+    </div>
+  </section>
+
+  <!-- ============ PASSAGGIO DISPOSITIVO ============ -->
+  <section class="screen" id="screen-pass">
+    <div class="pass-box">
+      <div class="pass-ico">&#128241;</div>
+      <h2 class="pass-title">Passa il dispositivo a</h2>
+      <div class="pass-name" id="pass-name">-</div>
+      <p class="pass-sub" id="pass-sub"></p>
+      <button class="btn btn-primary btn-big" id="pass-go">Sono pronto!</button>
+    </div>
+  </section>
+
+  <!-- ============ GIOCO ============ -->
+  <section class="screen" id="screen-game">
+    <div class="game-head">
+      <div class="g-player" id="g-player"></div>
+      <div class="g-progress" id="g-progress"></div>
+      <div class="g-score" id="g-score-wrap"><span id="g-score">0</span><small>pt</small></div>
+    </div>
+    <div class="timer-wrap"><div class="timer-bar" id="timer-bar"></div></div>
+    <div class="q-card">
+      <div class="q-cat" id="q-cat"></div>
+      <div class="q-board" id="q-board"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-options" id="q-options"></div>
+      <div class="q-feedback" id="q-feedback"></div>
+    </div>
+    <div class="powerbar" id="powerbar"></div>
+    <button class="btn btn-ghost btn-block" id="g-esci">Esci dalla partita</button>
+  </section>
+
+  <!-- ============ CONFRONTO DUELLO ============ -->
+  <section class="screen" id="screen-reveal">
+    <h2 class="screen-title" id="reveal-title">Confronto</h2>
+    <div class="split" id="reveal-split"></div>
+    <button class="btn btn-primary btn-block" id="reveal-next">Avanti</button>
+  </section>
+
+  <!-- ============ RISULTATO ============ -->
+  <section class="screen" id="screen-result">
+    <div id="result-body"></div>
+  </section>
+
+  <!-- ============ NEGOZIO ============ -->
+  <section class="screen" id="screen-shop">
+    <h2 class="screen-title">Negozio</h2>
+    <div class="coin-banner">Hai <b id="shop-coins">0</b> coppe &#127942;</div>
+    <div class="shop-tabs" id="shop-tabs">
+      <button class="shop-tab active" data-rep="aiuti">&#128736; Aiuti</button>
+      <button class="shop-tab" data-rep="avatar">&#128512; Avatar</button>
+      <button class="shop-tab" data-rep="titolo">&#127894; Titoli</button>
+      <button class="shop-tab" data-rep="tema">&#127912; Temi</button>
+    </div>
+    <p class="shop-sezione-nota" id="shop-nota"></p>
+    <div id="shop-list" class="shop-list"></div>
+  </section>
+
+  <!-- ============ CLASSIFICA ============ -->
+  <section class="screen" id="screen-rank">
+    <h2 class="screen-title">Classifica</h2>
+    <div class="seg seg-wide" id="rank-seg">
+      <button class="seg-btn active" data-rank="brain">Punti Cervello</button>
+      <button class="seg-btn" data-rank="skill">Indice Bravura</button>
+    </div>
+    <div id="rank-list" class="rank-list"></div>
+    <p class="hint" id="rank-hint"></p>
+  </section>
+
+  <!-- ============ STATISTICHE ============ -->
+  <section class="screen" id="screen-stats">
+    <h2 class="screen-title">Le tue statistiche</h2>
+    <div id="stats-body"></div>
+  </section>
+
+  <!-- ============ IMPOSTAZIONI ============ -->
+  <section class="screen" id="screen-settings">
+    <h2 class="screen-title">Impostazioni</h2>
+    <div class="card">
+      <h2 class="card-title">Suoni</h2>
+      <div class="set-row">
+        <div><b>Effetti sonori</b><div class="shop-desc">Suoni per risposte, coppe e passaggi di livello.</div></div>
+        <button class="btn btn-ghost" id="set-sound">Attivi</button>
+      </div>
+      <div class="set-row" style="margin-top:14px">
+        <div><b>Musica dei labirinti</b><div class="shop-desc">Brani originali generati dal gioco. Se metti i tuoi file in una cartella <b>musica</b> accanto al gioco, suona quelli.</div></div>
+        <button class="btn btn-ghost" id="set-musica">Attiva</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Dati condivisi</h2>
+      <p class="hint" style="margin-top:0" id="set-stato"></p>
+      <button class="btn btn-ghost btn-block" id="set-export">Scarica una copia dei dati</button>
+      <p class="hint" id="set-msg"></p>
+    </div>
+  </section>
+
+  <!-- ============ LABIRINTI: scelta del livello ============ -->
+  <section class="screen" id="screen-laby-home">
+    <h2 class="screen-title">Labirinti</h2>
+    <div class="card">
+      <p class="hint" style="margin-top:0" id="laby-intro"></p>
+      <div class="laby-lista" id="laby-lista"></div>
+    </div>
+  </section>
+
+  <!-- ============ LABIRINTI: partita ============ -->
+  <section class="screen" id="screen-laby">
+    <div class="laby-head">
+      <div class="laby-nome" id="laby-livello"></div>
+      <div class="laby-secondi" id="laby-secondi">-</div>
+    </div>
+    <div class="timer-wrap"><div class="timer-bar" id="laby-timer"></div></div>
+    <div class="laby-campo"><canvas id="laby-canvas"></canvas></div>
+    <div class="dpad">
+      <button class="d-su"  data-dir="n">&#9650;</button>
+      <button class="d-sx"  data-dir="w">&#9664;</button>
+      <button class="d-giu" data-dir="s">&#9660;</button>
+      <button class="d-dx"  data-dir="e">&#9654;</button>
+    </div>
+    <div class="powerbar" id="laby-aiuti"></div>
+    <button class="btn btn-ghost btn-block" id="laby-esci">Lascia perdere</button>
+  </section>
+
+  <!-- ============ IMPARA UNA LINGUA ============ -->
+  <section class="screen" id="screen-diff">
+    <div id="diff-box"></div>
+  </section>
+
+  <section class="screen" id="screen-lingua">
+    <div id="lingua-box"></div>
+    <button class="btn btn-ghost btn-block" id="lingua-esci">Lascia perdere</button>
+  </section>
+
+  <section class="screen" id="screen-lingua-fine">
+    <div id="lingua-esito"></div>
+  </section>
+
+  <!-- ============ PAUSA: limite di tempo ============ -->
+  <section class="screen" id="screen-pausa">
+    <div id="pausa-box"></div>
+  </section>
+
+  <!-- ============ LABIRINTI: esito ============ -->
+  <section class="screen" id="screen-laby-fine">
+    <div id="laby-esito"></div>
+  </section>
+
+  <!-- ============ CASSA SORPRESA ============ -->
+  <section class="screen" id="screen-cassa">
+    <div id="cassa-body"></div>
+  </section>
+
+  <!-- ============ SCOPERTE ============ -->
+  <section class="screen" id="screen-scoperte">
+    <h2 class="screen-title">Le tue scoperte</h2>
+    <div id="scoperte-body"></div>
+  </section>
+
+  <!-- ============ REGOLE ============ -->
+  <section class="screen" id="screen-rules">
+    <h2 class="screen-title">Come si gioca</h2>
+    <div class="card rules">
+      <h3>L'idea</h3>
+      <p>Brain Time non fa i compiti al posto tuo: ti allena. Ogni risposta giusta ti fa salire di livello e ti fa guadagnare coppe.</p>
+      <h3>Allenamento e Gioca</h3>
+      <p><b>Allenamento</b> serve solo a esercitarsi: non si vincono punti e non se ne perdono, i progressi restano come sono. <b>Gioca</b> &egrave; la versione seria: ogni risposta giusta d&agrave; punti, ogni sbagliata te ne toglie. Il punteggio della partita non pu&ograve; per&ograve; scendere sotto zero, e i punti delle partite gi&agrave; fatte non si toccano.</p>
+      <h3>Livello di difficolt&agrave;</h3>
+      <p>Prima di ogni partita scegli quanto vuoi faticare: <b>Facile</b> (6 domande pi&ugrave; semplici, pi&ugrave; tempo), <b>Medio</b> (9 domande del tuo livello) o <b>Difficile</b> (15 domande della fascia superiore, meno tempo). Pi&ugrave; &egrave; difficile, pi&ugrave; valgono i punti: x1, x1,2 e x1,5.</p>
+      <h3>Punti e livelli</h3>
+      <p>Ogni risposta giusta vale <b>100 punti</b>, pi&ugrave; un bonus se rispondi veloce. Se ne indovini tante di fila parte la <b>serie</b> e i punti si moltiplicano (fino a x2).</p>
+      <h3>Coppe e aiuti</h3>
+      <p>Le coppe si guadagnano rispondendo bene e vincendo le sfide. Si spendono al <b>Negozio</b>: 50/50, tempo extra, salta domanda, punti doppi, seconda chance.</p>
+      <h3>Sfida a distanza</h3>
+      <p>Lanci una sfida scegliendo avversario e materie e giochi subito il tuo turno. L'altro la trova aprendo lo stesso link, anche da un altro dispositivo, e risponde quando vuole: alla fine il gioco confronta i punteggi.</p>
+      <h3>Duello sullo stesso dispositivo</h3>
+      <p>Si risponde a turno, una domanda per volta: prima uno, poi l'altro. Solo dopo che hanno risposto entrambi lo schermo si sdoppia e mostra chi ha preso cosa &mdash; cos&igrave; nessuno pu&ograve; copiare.</p>
+      <h3>Livelli diversi, gara giusta</h3>
+      <p>Ognuno riceve domande del proprio livello (quinta elementare, seconda media o adulti). Le domande non sono le stesse, ma i punti valgono uguale: vince chi risponde meglio <i>al proprio livello</i>. In classifica c'&egrave; anche l'<b>Indice Bravura</b>, che misura solo la precisione.</p>
+      <h3>Modalit&agrave; genitori</h3>
+      <p>Gli adulti hanno il loro profilo e domande molto pi&ugrave; toste. Possono giocare e sfidare i figli, ma <b>non possono suggerire le risposte</b> durante il turno di un altro giocatore.</p>
+      <h3>Niente scorciatoie</h3>
+      <p>Non esiste un tasto "mostrami la risposta". Gli aiuti riducono la difficolt&agrave;, ma la scelta resta sempre tua.</p>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>

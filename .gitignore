@@ -1,0 +1,23 @@
+# File di prova generati durante il collaudo: si rifanno da soli
+_test-*.html
+_prova.html
+
+# Il file della versione online e' GENERATO da online/build.sh e, dopo
+# prepara-pubblicazione.sh, contiene i dati veri dei giocatori (nomi,
+# punteggi, e le foto degli avatar). Non va su GitHub: si rigenera con
+#   sh online/build.sh
+online/brain-time-online.html
+
+# Musica di proprieta' della famiglia, se ne mettono nella cartella
+musica/
+
+# Roba di Windows e collegamenti
+*.lnk
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# indirizzo della pagina privata di famiglia: sta fuori dal repository pubblico
+pagina-online.txt
+# indirizzo della pagina online, per questo computer: non va in un repo pubblico
+js/config-locale.js
