@@ -889,6 +889,47 @@
     document.getElementById('set-export').style.display = downloads ? '' : 'none';
     var msg = document.getElementById('set-msg');
     if (msg) msg.textContent = '';
+    renderDati();
+  }
+
+  /* ================= i tuoi dati =================
+     Qui i dati sono condivisi: li vedono tutti quelli che aprono la pagina.
+     Proprio per questo cancellarsi dev'essere facile quanto cominciare a
+     giocare, e si deve poter leggere in chiaro che cosa il gioco sa di te. */
+  function riepilogoDati(p) {
+    return 'Di te il gioco tiene solo questo: il nome <b>' + BT.esc(p.name) + '</b>, ' +
+      'la faccia che hai scelto, <b>' + BT.nomeClasse(p) + '</b>, i punti (' + p.xp + '), ' +
+      'le coppe (' + p.coins + '), quante domande hai fatto e quante giuste, gli sblocchi ' +
+      'del Negozio, le scoperte e i tempi dei labirinti.<br>' +
+      'Niente cognome, niente indirizzo, nessun messaggio scritto: nel gioco non si scrive.<br>' +
+      '<b>Qui i dati sono condivisi</b>: chi apre questa pagina vede il tuo nome e i tuoi punti ' +
+      'in classifica.';
+  }
+
+  function renderDati() {
+    var box = document.getElementById('set-dati');
+    var btn = document.getElementById('set-cancellami');
+    if (!box || !btn) return;
+    box.innerHTML = player ? riepilogoDati(player) : 'Scegli prima un giocatore.';
+    btn.disabled = !player;
+    var m = document.getElementById('set-cancella-msg');
+    if (m) m.textContent = '';
+  }
+
+  function cancellaProfilo() {
+    if (!player) return;
+    var nome = player.name;
+    if (!confirm('Vuoi cancellare il profilo di ' + nome + '?\n\n' +
+                 'Spariscono punti, coppe, sblocchi, scoperte e tempi dei labirinti, ' +
+                 'e il nome esce dalla classifica per tutti.')) return;
+    if (!confirm('Sicuro? È l\'ultima domanda.\nIl profilo di ' + nome +
+                 ' viene cancellato per sempre, su tutti i dispositivi.')) return;
+    BT.store.remove(player.id);        /* toglie anche le sfide che lo riguardano */
+    player = null;
+    applicaTema(null);
+    BT.toast('Profilo di ' + nome + ' cancellato.');
+    BT.show('screen-home');
+    BT.renderHome();
   }
 
   function scaricaBackup() {
@@ -1447,6 +1488,7 @@
       if (s.sound) BT.sfx.play('coppa');
       renderSettings();
     };
+    document.getElementById('set-cancellami').onclick = cancellaProfilo;
     document.getElementById('set-export').onclick = scaricaBackup;
 
     document.querySelectorAll('#shop-tabs .shop-tab').forEach(function (b) {

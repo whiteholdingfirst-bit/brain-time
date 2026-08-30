@@ -694,6 +694,45 @@
     }
     var msg = document.getElementById('set-msg');
     if (msg) msg.textContent = '';
+    renderDati();
+  }
+
+  /* ================= i tuoi dati =================
+     Cancellarsi dev'essere facile quanto cominciare a giocare. Qui i dati
+     restano su questo computer, ma la voce c'e' lo stesso: serve che sia
+     chiaro che cosa il gioco sa di te, e che si possa far sparire. */
+  function riepilogoDati(p) {
+    return 'Di te il gioco tiene solo questo: il nome <b>' + BT.esc(p.name) + '</b>, ' +
+      'la faccia che hai scelto, <b>' + BT.nomeClasse(p) + '</b>, i punti (' + p.xp + '), ' +
+      'le coppe (' + p.coins + '), quante domande hai fatto e quante giuste, gli sblocchi ' +
+      'del Negozio, le scoperte e i tempi dei labirinti.<br>' +
+      'Niente cognome, niente indirizzo, niente messaggi. ' +
+      'Tutto resta in questo browser: non viene mandato da nessuna parte.';
+  }
+
+  function renderDati() {
+    var box = document.getElementById('set-dati');
+    var btn = document.getElementById('set-cancellami');
+    if (!box || !btn) return;
+    box.innerHTML = player ? riepilogoDati(player) : 'Scegli prima un giocatore.';
+    btn.disabled = !player;
+    var m = document.getElementById('set-cancella-msg');
+    if (m) m.textContent = '';
+  }
+
+  function cancellaProfilo() {
+    if (!player) return;
+    var nome = player.name;
+    if (!confirm('Vuoi cancellare il profilo di ' + nome + '?\n\n' +
+                 'Spariscono punti, coppe, sblocchi, scoperte e tempi dei labirinti.')) return;
+    if (!confirm('Sicuro? È l\'ultima domanda.\nIl profilo di ' + nome +
+                 ' viene cancellato per sempre: non si torna indietro.')) return;
+    BT.store.remove(player.id);
+    player = null;
+    applicaTema(null);
+    BT.toast('Profilo di ' + nome + ' cancellato.');
+    BT.show('screen-home');
+    BT.renderHome();
   }
 
   function esportaBackup() {
@@ -1321,6 +1360,7 @@
       if (s.sound) BT.sfx.play('coppa');
       renderSettings();
     };
+    document.getElementById('set-cancellami').onclick = cancellaProfilo;
     document.getElementById('set-export').onclick = esportaBackup;
     document.getElementById('set-import').onclick = function () {
       document.getElementById('set-file').click();

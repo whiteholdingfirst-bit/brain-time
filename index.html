@@ -8,6 +8,22 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+
+<!-- ==== app installabile ====
+     Con questi tre pezzi il gioco si puo' "aggiungere alla schermata Home"
+     su telefono e tablet, e installare da Chrome o Edge su computer: icona
+     propria, finestra pulita, e funziona anche senza internet.
+     Aperto col doppio click (file://) il service worker non parte, ma il
+     gioco funziona lo stesso: era gia' fatto per stare offline. -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b3f96">
+<link rel="icon" href="icona.svg" type="image/svg+xml">
+<link rel="icon" href="brain-time.png" sizes="256x256" type="image/png">
+<link rel="apple-touch-icon" href="icone/icona-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Brain Time">
+<meta name="mobile-web-app-capable" content="yes">
 </head>
 <body>
 
@@ -246,6 +262,13 @@
       <input type="file" id="set-file" accept="application/json,.json" style="display:none">
       <p class="hint" id="set-msg"></p>
     </div>
+
+    <div class="card">
+      <h2 class="card-title">I tuoi dati</h2>
+      <p class="hint" style="margin-top:0" id="set-dati"></p>
+      <button class="btn btn-ghost btn-block" id="set-cancellami">Cancella il mio profilo</button>
+      <p class="hint" id="set-cancella-msg"></p>
+    </div>
   </section>
 
   <!-- ============ RISULTATO ============ -->
@@ -393,5 +416,16 @@
 <!-- configurazione di questo computer: fuori dal repository, puo' non esistere -->
 <script src="js/config-locale.js"></script>
 <script src="js/app.js"></script>
+<script>
+/* Registrazione del service worker: solo dove ha senso.
+   Su file:// non parte (lo vieta il browser) e non deve dare fastidio. */
+(function () {
+  if (!('serviceWorker' in navigator)) return;
+  if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+})();
+</script>
 </body>
 </html>

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- ============================================================
+       BRAIN TIME — icona
+       Un cervello stilizzato, non anatomico: due metà simmetriche
+       fatte di curve pulite, con dentro delle linee che sembrano
+       un circuito o una costellazione. Le scintille intorno danno
+       il tocco "magico" senza farne un disegno infantile.
+       Sorgente unica: da qui si generano i PNG e l'ICO.
+       ============================================================ -->
+  <defs>
+    <linearGradient id="sfondo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b3f96"/>
+      <stop offset="55%" stop-color="#123a86"/>
+      <stop offset="100%" stop-color="#0a1f52"/>
+    </linearGradient>
+    <linearGradient id="cervello" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8fe4ff"/>
+      <stop offset="50%" stop-color="#4db8f5"/>
+      <stop offset="100%" stop-color="#2f7fe0"/>
+    </linearGradient>
+    <radialGradient id="alone" cx="50%" cy="46%" r="52%">
+      <stop offset="0" stop-color="#7fd4ff" stop-opacity=".55"/>
+      <stop offset="60%" stop-color="#4aa8f0" stop-opacity=".16"/>
+      <stop offset="100%" stop-color="#0a1f52" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="morbido" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#sfondo)"/>
+  <circle cx="256" cy="238" r="180" fill="url(#alone)"/>
+
+  <!-- alone dietro al cervello -->
+  <g filter="url(#morbido)" opacity=".75">
+    <path d="M256 108c-46 0-84 26-92 62-30 6-52 30-52 60 0 20 10 38 26 48-6 12-8 24-4 36 8 26 34 42 62 38 12 22 34 36 60 36z"
+          fill="#5cc6ff"/>
+    <path d="M256 108c46 0 84 26 92 62 30 6 52 30 52 60 0 20-10 38-26 48 6 12 8 24 4 36-8 26-34 42-62 38-12 22-34 36-60 36z"
+          fill="#5cc6ff"/>
+  </g>
+
+  <!-- le due metà -->
+  <g stroke="#0a1f52" stroke-width="11" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M256 108c-46 0-84 26-92 62-30 6-52 30-52 60 0 20 10 38 26 48-6 12-8 24-4 36 8 26 34 42 62 38 12 22 34 36 60 36z"
+          fill="url(#cervello)"/>
+    <path d="M256 108c46 0 84 26 92 62 30 6 52 30 52 60 0 20-10 38-26 48 6 12 8 24 4 36-8 26-34 42-62 38-12 22-34 36-60 36z"
+          fill="url(#cervello)"/>
+    <path d="M256 108v280" stroke-width="13"/>
+  </g>
+
+  <!-- circuito interno: i "pensieri" -->
+  <g fill="none" stroke="#0a2a63" stroke-width="10" stroke-linecap="round" opacity=".55">
+    <path d="M212 168c-24 4-34 24-26 42 8 18 2 32-16 38"/>
+    <path d="M206 262c-20 2-30 16-26 32 4 14-2 26-16 32"/>
+    <path d="M300 168c24 4 34 24 26 42-8 18-2 32 16 38"/>
+    <path d="M306 262c20 2 30 16 26 32-4 14 2 26 16 32"/>
+  </g>
+  <g fill="#eaf7ff">
+    <circle cx="170" cy="248" r="10"/><circle cx="214" cy="330" r="9"/>
+    <circle cx="342" cy="248" r="10"/><circle cx="298" cy="330" r="9"/>
+    <circle cx="186" cy="182" r="8"/><circle cx="326" cy="182" r="8"/>
+  </g>
+
+  <!-- scintille: la parte "magica" -->
+  <g fill="#ffd45e">
+    <path d="M104 128l9 26 26 9-26 9-9 26-9-26-26-9 26-9z"/>
+    <path d="M416 152l7 20 20 7-20 7-7 20-7-20-20-7 20-7z"/>
+    <path d="M392 386l6 17 17 6-17 6-6 17-6-17-17-6 17-6z"/>
+    <path d="M112 372l5 14 14 5-14 5-5 14-5-14-14-5 14-5z"/>
+  </g>
+  <g fill="#ffffff" opacity=".9">
+    <circle cx="150" cy="96" r="5"/><circle cx="368" cy="112" r="4"/>
+    <circle cx="86" cy="290" r="4"/><circle cx="430" cy="300" r="5"/>
+    <circle cx="330" cy="424" r="4"/><circle cx="176" cy="420" r="4"/>
+  </g>
+</svg>

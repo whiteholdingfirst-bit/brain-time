@@ -94,3 +94,53 @@ Menu, pulsanti e messaggi in inglese, francese, tedesco e spagnolo — circa 400
 ricablare. Le domande del quiz resterebbero in italiano: sono programma scolastico italiano.
 La voce nelle Impostazioni arriverà **insieme** alla traduzione, non prima: un interruttore che non
 fa niente è peggio che non averlo.
+
+---
+
+## Decisioni prese il 30 agosto 2026 (privacy e app)
+
+Prese insieme, valgono per tutto quello che verrà costruito dopo.
+
+| Tema | Decisione |
+|---|---|
+| Messaggi fra giocatori | **Non si fanno.** Né testo libero né frasi fisse. Nel gioco non si scrive. |
+| Foto | **Nessuna foto** per chi non è di famiglia. |
+| Cancellarsi | **Fatto**: Impostazioni → *I tuoi dati* → «Cancella il mio profilo», con due conferme. |
+| Nome | Soprannome, mai nome e cognome. |
+| Età | Numero scelto da una lista, **mai** la data di nascita. |
+| Accesso | Solo su invito. |
+| Server | In Europa. |
+| App | **PWA** (icona sulla schermata, funziona offline). App Store e Play Store solo se il gioco si diffonde davvero. |
+
+### Perché niente messaggi
+Il testo libero fra minori apre a offese, esclusioni e contatti non controllati, e
+obbligherebbe a moderare. Si è scelto di non averlo affatto: la community è la
+**classifica condivisa**, non una chat.
+
+### Cosa dire ai genitori
+Serve un foglio solo, corto, da mandare quando si invita un bambino. La bozza è in
+`README.md`, sezione «Per i genitori». Non è un documento legale: deve essere vero e
+comprensibile, e dire chi contattare per cancellare tutto.
+
+---
+
+## Cosa manca, in ordine
+
+### 1. L'archivio condiviso (Supabase)
+Serve l'account (lo crea il proprietario del progetto) e poi le chiavi. Le regole di
+privacy sono quelle della tabella qui sopra. La sincronizzazione userà `BT.fondi()`
+di `js/fusione.js`.
+
+### 2. Classifica e community
+Dopo Supabase: classifica fra amici, senza messaggi.
+
+### 3. Una banca di domande per i piccoli
+Sotto gli otto anni le domande restano quelle della quinta elementare. Serve una quarta
+banca in tutte le categorie. È lavoro di contenuti, non di codice.
+
+### 4. La traduzione dell'interfaccia
+Circa 400 frasi in inglese, francese, tedesco e spagnolo. La voce nelle Impostazioni
+arriverà insieme alla traduzione, non prima.
+
+### 5. Riaccendere il limite dei 30 minuti
+`ATTIVO = true` in `js/limite.js`, quando il gioco è considerato finito.
