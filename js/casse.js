@@ -33,6 +33,40 @@
   ];
   BT.RARITA_MAX = BT.RARITA.length - 1;
 
+  /* ---------------- l'ottavo gradino, fuori scala ----------------
+     La cassa Suprema non sta dentro BT.RARITA di proposito: cosi'
+     BT.RARITA_MAX resta 7 e rimandaCassa non puo' arrivarci rifiutando.
+     Ci si arriva soltanto dalle tre stelle, e soltanto quando la cassa e'
+     gia' in cima alla scala.
+
+     I numeri sono CALCOLATI dalla Segreta, non scritti a mano: la promessa
+     fatta al giocatore e' "il 50% in piu' di una cassa normale" e deve
+     restare vera nei numeri anche se un giorno si ritocca la tabella. */
+  function piu50(n) { return Math.round((n || 0) * 1.5); }
+
+  BT.RARITA_SUPREMA = (function () {
+    var top = BT.RARITA[BT.RARITA_MAX];
+    return {
+      id: 'supremo', nome: 'Suprema', ico: '👑',
+      premi: piu50(top.premi),
+      coppe: [piu50(top.coppe[0]), piu50(top.coppe[1])],
+      garantiti: piu50(top.garantiti),
+      scoperte: piu50(top.scoperte || 1),
+      suprema: true
+    };
+  })();
+
+  /* Le tre stelle: se ne tocca una sola, e una sola delle tre trasforma la
+     cassa. Una su tre.
+
+     E' l'unico punto del gioco in cui la fortuna conta qualcosa, e il
+     paletto e' che puo' solo aggiungere: chi sbaglia stella tiene la
+     Segreta intera, non perde niente. La rarita' resta una cosa che si
+     guadagna aspettando; il dado arriva dopo, quando non c'e' piu' niente
+     da aspettare. */
+  BT.casse.STELLE = 3;
+  BT.casse.stellaFortunata = function () { return BT.rnd(1, BT.casse.STELLE); };
+
   BT.rarita = function (n) {
     return BT.RARITA[Math.min(BT.RARITA_MAX, Math.max(1, n || 1))];
   };
@@ -99,15 +133,16 @@
   }
 
   /* --- apre la cassa e applica subito tutti i premi --- */
-  BT.casse.apri = function (p) {
+  BT.casse.apri = function (p, suprema) {
     BT.store.normalizza(p);
     var molt = BT.store.apriCassa(p);
     if (!molt) return null;
 
-    var rar = BT.rarita(molt);
+    var rar = suprema ? BT.RARITA_SUPREMA : BT.rarita(molt);
     var premi = [];
 
-    /* le scoperte sono il cuore della cassa: una sempre, due nella Segreta */
+    /* le scoperte sono il cuore della cassa: una sempre, due nella Segreta,
+       tre nella Suprema */
     var quanteScoperte = rar.scoperte || 1;
     for (var s = 0; s < quanteScoperte; s++) {
       var nuove = scoperteNuove(p);

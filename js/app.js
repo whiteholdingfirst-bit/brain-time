@@ -1057,7 +1057,8 @@
         (molt === 1 ? ' tocco' : ' tocchi') + ' di stella</div>' +
       '<div class="cassa-testo">' +
         (alMassimo
-          ? 'Sei arrivato in cima: pi&ugrave; in alto di cos&igrave; non si va. Prendila!'
+          ? 'Sei arrivato in cima. Aprendola ti aspettano <b>tre stelle</b>: una '
+            + 'delle tre pu&ograve; trasformarla in <b>Suprema</b> &#128081;.'
           : 'Se la <b>rifiuti</b> la prossima vale il doppio: diventa <b>' + pross.nome +
             '</b> ' + pross.ico + ', con un tocco in pi&ugrave; sulla stella.') +
       '</div>' +
@@ -1149,11 +1150,15 @@
 
       if (livello >= tocchi) {
         finito = true;
+        /* in cima alla scala l'ultimo tocco non apre: porta alle tre stelle */
+        var conStelle = tocchi >= BT.RARITA_MAX;
         eti.innerHTML = r.misteriosa
           ? 'La cassa <b>Segreta</b>! Non capita spesso.'
           : 'Cassa <b>' + r.nome + '</b>!';
         stella.disabled = true;
-        setTimeout(function () { apriCassa(p); }, r.misteriosa ? 1100 : 700);
+        setTimeout(function () {
+          if (conStelle) mostraTreStelle(p); else apriCassa(p);
+        }, r.misteriosa ? 1100 : 700);
       } else {
         var manca = tocchi - livello;
         eti.innerHTML = 'Ancora ' + manca + (manca === 1 ? ' tocco' : ' tocchi') + '!';
@@ -1161,8 +1166,58 @@
     };
   }
 
-  function apriCassa(p) {
-    var esito = BT.casse.apri(p);
+  /* --- le tre stelle: solo in cima alla scala ---
+     Quando la cassa e' gia' Segreta non c'e' piu' niente da aspettare, e
+     al posto dell'ultimo tocco arriva una scelta: tre stelle, se ne tocca
+     una. Una delle tre trasforma la cassa in Suprema, il 50% in piu'.
+     Sbagliare non toglie niente: resta la Segreta per intero. */
+  function mostraTreStelle(p) {
+    var fortunata = BT.casse.stellaFortunata(), fatto = false;
+    var s = '';
+    for (var i = 1; i <= BT.casse.STELLE; i++) {
+      s += '<button class="stella stella-tre" data-n="' + i +
+           '" aria-label="Stella numero ' + i + '">&#11088;</button>';
+    }
+
+    var box = document.getElementById('cassa-body');
+    box.innerHTML = '<div class="cassa-box stella-box" data-rar="segreto">' +
+      '<div class="cassa-titolo">Sei in cima alla scala</div>' +
+      '<div class="stella-eti" id="tre-eti">Scegline <b>una</b>: pu&ograve; ' +
+        'trasformare la cassa in <b>Suprema</b> &#128081;, il <b>50% in pi&ugrave;</b> ' +
+        'di una cassa normale.</div>' +
+      '<div class="stella-tre-riga">' + s + '</div>' +
+      '<div class="cassa-leggi">Se sbagli non perdi niente: resta la Segreta.</div>' +
+      '</div>';
+    BT.show('screen-cassa');
+
+    var eti = box.querySelector('#tre-eti');
+    var tutte = box.querySelectorAll('.stella-tre');
+    Array.prototype.forEach.call(tutte, function (b) {
+      b.onclick = function () {
+        if (fatto) return;
+        fatto = true;
+        var vinta = +b.getAttribute('data-n') === fortunata;
+
+        /* si scoprono tutte e tre: se non si vedesse dov'era, sembrerebbe
+           che il gioco decida dopo il tocco */
+        Array.prototype.forEach.call(tutte, function (o) {
+          var suo = +o.getAttribute('data-n') === fortunata;
+          o.innerHTML = suo ? '&#128081;' : '&#11088;';
+          o.disabled = true;
+          o.classList.add(suo ? 'stella-vinta' : 'stella-persa');
+        });
+        b.classList.add('pulsa');
+        BT.sfx.stella(vinta ? BT.RARITA_MAX : 2);
+        eti.innerHTML = vinta
+          ? 'Cassa <b>Suprema</b> &#128081;! Capita una volta su ' + BT.casse.STELLE + '.'
+          : 'Era quell&rsquo;altra. Resta la <b>Segreta</b> &#128302;, che &egrave; gi&agrave; tanta roba.';
+        setTimeout(function () { apriCassa(p, vinta); }, 1500);
+      };
+    });
+  }
+
+  function apriCassa(p, suprema) {
+    var esito = BT.casse.apri(p, suprema);
     if (!esito) { BT.show('screen-menu'); BT.renderMenu(); return; }
     BT.sfx.play('vittoria');
     mostraPremi(p, esito);

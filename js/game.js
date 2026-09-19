@@ -56,6 +56,16 @@
         turn: 0,
         runs: cfg.players.map(emptyRun),
         used: cfg.players.map(function () { return {}; }),
+        /* le domande gia' viste nelle partite PRECEDENTI di ciascun giocatore:
+           e' quello che impedisce a due partite di fila di somigliarsi */
+        recenti: cfg.players.map(function (pl) {
+          var o = {};
+          BT.store.normalizza(pl);
+          /* l'indice e' l'eta': p.viste e' in ordine, la prima e' la piu' lontana.
+             Serve a decidere quale ripescare quando la banca non basta. */
+          (pl.viste || []).forEach(function (k, i) { o[k] = i; });
+          return o;
+        }),
         streaks: cfg.players.map(function () { return 0; }),
         pending: [null, null],
         q: null,
@@ -102,7 +112,7 @@
     /* ================= domanda ================= */
     loadQuestion: function () {
       var p = G.players[G.turn];
-      G.q = BT.bank.draw(G.cats, p.level, G.used[G.turn], G.diff.salto);
+      G.q = BT.bank.draw(G.cats, p.level, G.used[G.turn], G.diff.salto, G.recenti[G.turn]);
       G.locked = false;
       G.secondChance = false;
       G.moltiplicatore = 1;
@@ -318,12 +328,29 @@
           run.perfect = true;
           if (tipo !== 'allena') run.coins += 10;
         }
+
+        /* Si segnano le domande viste, una volta sola a partita. Vale anche
+           per l'allenamento: se allenandosi non si "consumassero", subito
+           dopo si ritroverebbero identiche nella partita vera.
+           Il tetto e' due terzi della banca del suo livello, cosi' resta
+           sempre un terzo di domande fresche fra cui pescare.
+           Va prima di recordRun perche' online ogni salvataggio ripubblica
+           la pagina: si scrive tutto insieme, in un colpo solo. */
+        var livello = BT.livelloDi(p.level, diff.salto);
+        var tutte = BT.CATS.map(function (c) { return c.id; });
+        var chiavi = Object.keys(G.used[idx]).filter(function (k) {
+          return k.indexOf('math:') !== 0;      /* la matematica si rigenera */
+        });
+        BT.store.ricordaViste(p, chiavi, BT.bank.quante(tutte, livello) * 0.66,
+                              tipo !== 'allena');
+
         /* l'allenamento non tocca nulla del profilo: niente punti, coppe o statistiche */
         var salita = (tipo === 'allena')
           ? { levelUp: false, from: 0, to: 0 }
           : BT.store.recordRun(p, run);
         /* ogni livello nuovo porta una cassa sorpresa */
         if (salita.levelUp) BT.store.aggiungiCassa(p);
+
         out.push({ p: p, run: run, levelUp: salita });
       });
 
@@ -419,7 +446,7 @@
   function cambiaDomanda() {
     var p = G.players[G.turn];
     var molt = G.moltiplicatore, scudo = G.scudo, seconda = G.secondChance, usati = G.usedThisQ;
-    G.q = BT.bank.draw(G.cats, p.level, G.used[G.turn], G.diff.salto);
+    G.q = BT.bank.draw(G.cats, p.level, G.used[G.turn], G.diff.salto, G.recenti[G.turn]);
     G.locked = false;
     G.congelato = false;
     G.moltiplicatore = molt;

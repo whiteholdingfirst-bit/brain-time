@@ -182,8 +182,28 @@
       if (!p.labirinto) p.labirinto = { livello: 1, completati: 0, tempi: {} };
       if (!p.labirinto.tempi) p.labirinto.tempi = {};
       if (!p.tempo) p.tempo = { usato: 0, ultimo: 0, bloccatoFino: 0 };
+      if (!Array.isArray(p.viste)) p.viste = [];   /* domande gia' viste */
 
       return p;
+    },
+
+    /* --- memoria lunga delle domande gia' viste ---
+       Serve a non riproporre le stesse domande due partite di fila. Si
+       scrive una volta sola a fine partita, mai a ogni domanda: qui ogni
+       salvataggio ripubblica la pagina e la fa ricaricare.
+       Il tetto e' obbligatorio: ricordare tutta la banca la svuoterebbe. */
+    ricordaViste: function (p, chiavi, tetto, rimanda) {
+      if (!chiavi || !chiavi.length) return;
+      BT.store.normalizza(p);
+      var nuove = p.viste.filter(function (k) { return chiavi.indexOf(k) < 0; });
+      nuove = nuove.concat(chiavi);
+      var max = Math.max(10, Math.floor(tetto || 0));
+      if (nuove.length > max) nuove = nuove.slice(nuove.length - max);
+      p.viste = nuove;
+      /* rimanda: salva qualcun altro subito dopo (recordRun). Un salvataggio
+         in meno online e' una ripubblicazione in meno, e quindi un
+         ricaricamento della pagina in meno in faccia a chi ha appena finito. */
+      if (!rimanda) pubblica();
     },
 
     /* --- casse sorpresa --- */

@@ -4,7 +4,7 @@ Questo file serve a **riprendere il lavoro da un'altra sessione**, su un altro c
 telefono. Le note tecniche stanno in `CLAUDE.md`; qui c'è solo lo stato: cosa è stato deciso,
 cosa è fatto, cosa manca e in che ordine.
 
-Ultimo aggiornamento: **19 settembre 2026**. Ultimo lavoro sul codice: **30 agosto 2026**.
+Ultimo aggiornamento: **19 settembre 2026**. Ultimo lavoro sul codice: **19 settembre 2026**.
 
 ---
 
@@ -47,6 +47,11 @@ Tutto è salvo e allineato: nessuna modifica in sospeso, locale e GitHub sono al
 - **Pagina di famiglia**: l'ultimo salvataggio è del **30 agosto**. Vuol dire che da allora nessuno
   ha giocato *lì sopra*. Non dice niente su chi ha giocato in locale o sulla pagina pubblica: quelle
   due tengono i punteggi nel browser e non lasciano traccia.
+- **Domande**: due partite di fila non danno piu' le stesse domande (era il difetto piu'
+  visibile: Diego e Gabri si ritrovavano lo stesso quiz). Ogni giocatore si porta dietro la
+  memoria di quelle gia' viste.
+- **Cassa Suprema**: in cima alla scala delle rarita' si scelgono tre stelle, e una su tre
+  trasforma la cassa nella Suprema, il 50% in piu'.
 - **Supabase**: l'account non risulta ancora fatto (nel progetto non c'è nessuna chiave). È il punto
   fermo su cui è rimasto tutto il resto.
 

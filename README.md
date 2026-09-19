@@ -386,6 +386,15 @@ che rischi è la voglia di aprirla subito.
 
 Dentro ci sono aiuti, coppe, avatar rari, temi speciali e sempre una **scoperta**.
 
+### 👑 Le tre stelle e la cassa Suprema
+Se sei arrivato in cima — la **Segreta**, sei rinunce di fila — l'ultimo tocco non apre la cassa:
+compaiono **tre stelle** e ne scegli una. **Una delle tre** trasforma la cassa nella **Suprema**
+👑, che vale il **50% in più** di una cassa normale: 11 premi, tre scoperte e fino a 1920 coppe.
+
+È l'unico punto del gioco dove conta la fortuna, ed è fatto in modo che **non possa toglierti
+niente**: se scegli la stella sbagliata ti resta la Segreta intera, che è già la cassa più bella
+che c'è. Dopo la scelta si scoprono tutte e tre, così vedi dov'era la corona.
+
 ### 💡 Scoperte
 Sono le curiosità e i trucchetti che trovi nelle casse: per studiare, per fare i compiti, per
 aggiustare le cose, per orientarsi, e storie di come sono state inventate. Ce ne sono 48 e si

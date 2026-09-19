@@ -827,3 +827,76 @@ si gira senza staccare.
 `body{touch-action:manipulation}` toglie lo zoom da doppio tocco lasciando lo
 scorrimento e la pinzata a due dita. Sul labirinto (`#laby-canvas`, `.dpad`)
 `touch-action:none`: li' il dito serve a guidare e il browser non deve fare nulla.
+
+---
+
+# Randomizzazione delle domande e cassa Suprema (19/09/2026)
+
+## Due partite di fila non si somigliano piu'
+
+Sintomo riferito: *"io Diego ho fatto una partita e Gabri dopo ne ha fatta un'altra e le
+domande erano le stesse"*.
+
+Causa: `BT.bank.draw` ricordava **solo la partita in corso** (`used`). Finita quella si
+ripartiva da zero, e con la stessa banca (due fratelli allo stesso livello, stessa
+difficolta') ricapitavano quasi le stesse domande. Il vecchio pescaggio, poi, tirava a caso
+e riprovava fino a 60 volte: piu' la banca si riempiva, piu' i doppioni scappavano.
+
+Adesso ogni domanda ha un **voto**, e si pesca fra quelle col voto migliore:
+
+| voto | significato |
+|---|---|
+| `-1` | mai vista, **oppure** matematica (si rigenera con numeri nuovi: non invecchia mai) |
+| `n` | gia' vista, e `n` dice quanto tempo fa (`0` = la piu' lontana che il giocatore ricorda) |
+| `null` | gia' uscita in **questa** partita: non si ripesca mai |
+
+Cosi' un doppione non e' improbabile, e' **impossibile** finche' la banca non si esaurisce; e
+quando si esaurisce torna prima la piu' vecchia. La categoria si sceglie **prima** della
+domanda (fra quelle che hanno qualcosa di altrettanto buono da offrire): pescando fra tutte
+le domande insieme, le materie con la banca piu' grande uscirebbero molto piu' spesso e il
+quiz misto non sarebbe piu' misto.
+
+La chiave e' `categoria:livello:indice`. Il livello ci sta dentro di proposito: cambiando
+difficolta' cambia la banca, e `chess:3` di quinta non e' `chess:3` di seconda media.
+
+**La memoria lunga** e' `p.viste`, un array **in ordine** (la prima e' la piu' lontana), scritto
+da `BT.store.ricordaViste(p, chiavi, tetto, rimanda)` una volta sola a fine partita — mai a
+ogni domanda: online ogni salvataggio ripubblica la pagina. `rimanda: true` salta il
+salvataggio perche' ci pensa `recordRun` subito dopo: una ripubblicazione in meno in faccia
+a chi ha appena finito di giocare.
+
+Due paletti da non togliere:
+- **il tetto e' obbligatorio** (due terzi della banca, `BT.bank.quante()`): ricordare tutta la
+  banca la svuoterebbe e non resterebbe piu' niente da pescare;
+- **la matematica non entra in `viste`**: e' generata al volo, lo stesso schema con numeri
+  nuovi e' una domanda nuova.
+
+Vale anche per l'**allenamento**: se allenandosi le domande non si "consumassero", subito dopo
+si ritroverebbero identiche nella partita vera.
+
+> Limite dichiarato: una materia singola con banca piccola deve per forza ripetere. Scacchi in
+> quinta ha 12 domande e una partita in Medio ne pesca 9. Adesso almeno ripesca le piu' vecchie,
+> e **dentro la stessa partita** non ci sono mai doppioni. Per risolverlo davvero serve scrivere
+> altre domande, non altro codice.
+
+## La cassa Suprema e le tre stelle (idea di Diego)
+
+Arrivati in cima alla scala (`Segreta`, 7 tocchi), l'ultimo tocco **non apre**: porta a una
+schermata con **tre stelle**, se ne tocca una. Una delle tre trasforma la cassa in **Suprema**
+👑, che vale il **50% in piu'** di una cassa normale.
+
+`BT.RARITA_SUPREMA` sta **fuori** da `BT.RARITA` di proposito: cosi' `BT.RARITA_MAX` resta 7 e
+`rimandaCassa` non puo' arrivarci rifiutando. Ci si arriva solo dalle tre stelle.
+I numeri sono **calcolati** dalla Segreta (`piu50()`), non scritti a mano: la promessa e' "il
+50% in piu'" e deve restare vera nei numeri anche ritoccando la tabella — 11 premi, 3 scoperte,
+960-1920 coppe.
+
+> ⚠️ **E' l'unica eccezione alla regola "niente fortuna nella salita"**, ed e' voluta che stia
+> qui. I paletti che la rendono accettabile: ci si arriva solo dopo aver rifiutato **sei casse
+> di fila**, quindi la rarita' resta una cosa che si guadagna aspettando; e il dado **puo' solo
+> aggiungere** — chi sbaglia stella tiene la Segreta intera, non perde niente. Se un domani si
+> volesse una fortuna che toglie, la risposta e' no: sarebbe una slot machine per bambini.
+
+Dopo il tocco si scoprono **tutte e tre**: se non si vedesse dov'era la corona, sembrerebbe che
+il gioco decida dopo. Colori in `css/style.css` (`--rar-supremo`, `.rar-supremo`,
+`.stella-tre-riga`); le tre stelle sono in `clamp()` perche' su telefono ci stiano in riga.
