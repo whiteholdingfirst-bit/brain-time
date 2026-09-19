@@ -6,13 +6,22 @@
 (function (BT) {
   'use strict';
 
+  /* L'icona di una materia non e' piu' un'emoji ma un disegno. E'
+     una stringa di markup, esattamente come prima lo era il carattere
+     emoji: tutti i posti che facevano `ico + ' ' + nome` continuano a
+     funzionare senza sapere che cosa e' cambiato.
+     L'SVG prende misura dal testo che lo ospita (1em, vedi .ic nel
+     CSS) e colore da chi lo contiene, quindi segue il tema da solo. */
+  function ico(id) { return '<svg class="ic"><use href="#i-' + id + '"/></svg>'; }
+  BT.icona = ico;
+
   BT.CATS = [
-    { id: 'math',    ico: '🔢', name: 'Matematica', sub: 'Calcolo e problemi' },
-    { id: 'chess',   ico: '♟️', name: 'Scacchi',    sub: 'Tattica e strategia' },
-    { id: 'logic',   ico: '🧩', name: 'Logica',     sub: 'Enigmi e sequenze' },
-    { id: 'lang',    ico: '🌍', name: 'Lingue',     sub: '5 lingue straniere' },
-    { id: 'history', ico: '🏛️', name: 'Storia',     sub: 'Dalla preistoria a oggi' },
-    { id: 'culture', ico: '💡', name: 'Cultura generale', sub: 'Un po&rsquo; di tutto' }
+    { id: 'math',    ico: ico('numeri'),    name: 'Matematica', sub: 'Calcolo e problemi' },
+    { id: 'chess',   ico: ico('scacchi'),   name: 'Scacchi',    sub: 'Tattica e strategia' },
+    { id: 'logic',   ico: ico('logica'),    name: 'Logica',     sub: 'Enigmi e sequenze' },
+    { id: 'lang',    ico: ico('globo'),     name: 'Lingue',     sub: '5 lingue straniere' },
+    { id: 'history', ico: ico('colonna'),   name: 'Storia',     sub: 'Dalla preistoria a oggi' },
+    { id: 'culture', ico: ico('scintilla'), name: 'Cultura generale', sub: 'Un po&rsquo; di tutto' }
   ];
 
   BT.catInfo = function (id) {

@@ -974,3 +974,97 @@ quando l'ultima versione online e' quella pubblicata da qui.
 > distanza di poco. Se una modifica e' gia' su GitHub Pages e in locale, la pagina di famiglia
 > puo' aspettare il deploy successivo: basta segnarlo in `LAVORI-IN-CORSO.md` perche' non si
 > perda per strada.
+
+---
+
+# La faccia arcade (19/09/2026)
+
+Scelta fra tre direzioni provate a video (arcade, quaderno, collezione):
+**arcade**. Il mondo e' un cabinato da sala giochi — notte, neon, tasti con
+lo spessore della plastica. Il motivo dichiarato: deve reggere il confronto
+con i giochi che i compagni di classe hanno gia' sul telefono.
+
+## I nomi delle variabili mentono, ed e' voluto
+
+`--azzurro-800` adesso e' un ciano acceso, `--carta` e' blu notte,
+`--inchiostro` e' quasi bianco. **Non rinominarle.** Sono usate in centinaia
+di righe del foglio e in nessuna di quelle righe conta il *colore*: conta il
+**ruolo**, che non e' cambiato di una virgola.
+
+| variabile | ruolo, prima e adesso |
+|---|---|
+| `--azzurro-800/700` | il colore acceso dei titoli |
+| `--azzurro-600/500` | il riempimento del tasto principale |
+| `--azzurro-300/100/50` | bordi e superfici smorzate |
+| `--carta`, `--carta-2` | le superfici che stanno sopra il fondo |
+| `--inchiostro` | il testo |
+
+Rifarle da zero sarebbe stato un giorno di lavoro per un guadagno solo estetico.
+Il foglio era gia' tutto a variabili: e' quello che ha reso possibile cambiare
+mondo senza riscrivere il gioco.
+
+## ⚠️ La trappola che e' costata mezz'ora: dove si dichiara una variabile
+
+Le variabili che **derivano** dal neon (`--azzurro-800: var(--neon-chiaro)`)
+stanno dichiarate su **`body`**, non su `:root`. Non e' un capriccio:
+
+> Il valore di una variabile CSS che contiene `var()` viene risolto
+> **sull'elemento dove la variabile e' dichiarata**, non dove viene usata.
+
+Dichiarando `--azzurro-800: var(--neon-chiaro)` dentro `:root`, quel colore
+resta inchiodato al neon predefinito. I temi cambiano il neon su `body`, quindi
+non lo toccavano piu': il risultato era un gioco in cui cambiando tema si
+accendeva **solo il logo** e nient'altro. Sembrava che i temi fossero rotti, e
+invece era il punto di dichiarazione.
+
+## I 16 temi sono il tuo neon, non 16 mondi
+
+Prima ogni tema ridefiniva quattordici variabili: fondo, carte, testo, tutto.
+Sedici mondi diversi, e un gioco che sembrava configurabile invece che
+disegnato — senza una faccia da riconoscere da lontano.
+
+Adesso il mondo e' uno solo e il tema cambia **quattro colori**: `--neon`,
+`--neon-chiaro`, `--neon-cupo`, `--neon-2`, piu' la tinta del fondo
+(`--cielo-*`). Cinque righe per tema.
+
+Due conseguenze buone, e vanno protette:
+- **nessun tema puo' nascere illeggibile**, perche' il contrasto lo decide il
+  fondo, che non cambia mai davvero. Verificato a macchina: su tutti e 16, i
+  titoli e i tasti stanno sopra 3:1;
+- **gli identificativi sono rimasti quelli di prima** (`rosso`, `oceano`,
+  `galassia`...), quindi chi aveva comprato un tema ce l'ha ancora e il Negozio
+  non si accorge di niente. Toccare quegli id vorrebbe dire rubare qualcosa a
+  chi ha speso le coppe.
+
+## Le icone: quali sono disegnate e quali no
+
+C'e' una regola, non un elenco a caso:
+
+- **disegnate** (SVG nel markup, `BT.icona(id)`): le cose che *identificano*
+  una parte del gioco — le sei materie, le tessere del menu, l'icona grossa del
+  risultato, la coppa delle monete ovunque si affacci;
+- **restano emoji**: gli **avatar** (sono la faccia del giocatore, non
+  un'icona: sono 224 e uno di quelli e' proprio una coppa), le rarita' delle
+  casse, gli aiuti del Negozio, le bandiere delle lingue, e le decorazioni di un
+  momento (la bandierina del labirinto, la clessidra della pausa).
+
+Lo sprite `<symbol>` sta in `index.html` **e** in `online/index-online.html`:
+sono due markup separati, quindi le icone nuove vanno aggiunte in tutti e due.
+`BT.icona()` restituisce una **stringa di markup**, esattamente come prima
+`ico` conteneva un carattere emoji: ecco perche' tutti i posti che facevano
+`ico + ' ' + nome` continuano a funzionare senza sapere che e' cambiato.
+Le icone prendono misura dal testo che le ospita (`1em`) e colore da chi le
+contiene, quindi seguono il tema da sole.
+
+> Attenzione ai **toast**: usano `textContent`, quindi li' una stringa di
+> markup si vedrebbe scritta. Sono gli unici due posti dove la coppa e' rimasta
+> emoji per forza.
+
+## I caratteri: l'insegna dove e' corto, il corpo dove si legge
+
+**Bungee** (l'insegna) sta su nomi, punteggi, titoli di tessera. **Archivo**
+(il corpo) su tutto il resto. La regola non e' di gusto: Bungee e' nato per le
+scritte dei negozi e su una domanda di tre righe stanca. Provato, visto, e
+infatti `.q-text` usa il corpo in grassetto.
+Le due famiglie arrivano da Google Fonts con il ripiego di sistema, come prima
+faceva Fredoka: senza rete il gioco resta leggibile.

@@ -44,52 +44,34 @@ Tutto è salvo e allineato: nessuna modifica in sospeso, locale e GitHub sono al
 
 - **Gioco pubblico**: online e funzionante, installabile come app (icona, schermo intero, funziona
   senza internet).
-- **Pagina di famiglia**: l'ultimo salvataggio è del **30 agosto**. Vuol dire che da allora nessuno
-  ha giocato *lì sopra*. Non dice niente su chi ha giocato in locale o sulla pagina pubblica: quelle
-  due tengono i punteggi nel browser e non lasciano traccia.
 - **Domande**: due partite di fila non danno piu' le stesse domande (era il difetto piu'
   visibile: Diego e Gabri si ritrovavano lo stesso quiz). Ogni giocatore si porta dietro la
   memoria di quelle gia' viste.
-- **Reazioni**: punteggio che sale contando, serie a tre gradini, coriandoli, lampo di esito
-  (`js/juice.js`). È la prima metà del lavoro sulla grafica: quella che **si sente**.
+- **Grafica**: rifatta. Le reazioni (`js/juice.js`) e la faccia **arcade** - notte, neon, tasti
+  con lo spessore della plastica, icone disegnate, 16 temi diventati "il tuo neon".
 - **Cassa Suprema**: in cima alla scala delle rarita' si scelgono tre stelle, e una su tre
   trasforma la cassa nella Suprema, il 50% in piu'.
-- ⚠️ **Pagina di famiglia: un giro indietro.** Ha le domande randomizzate e la cassa Suprema, non
-  ancora le reazioni. Il controllo anti-sovrascrittura adesso rifiuta la forzatura quando qualcuno
-  ha giocato li' sopra (e il 19/09 e' successo), e l'unica strada e' rileggere tutto il file: si
-  paga una volta sola, **insieme al prossimo deploy della grafica**. Locale e pagina pubblica sono
-  gia' aggiornati.
+- ⚠️ **Pagina di famiglia: indietro rispetto al resto.** Ha le domande randomizzate e la cassa
+  Suprema, non ancora le reazioni ne' la faccia arcade. Il controllo anti-sovrascrittura adesso
+  rifiuta la forzatura quando qualcuno ha giocato li' sopra (e il 19/09 e' successo), e l'unica
+  strada e' rileggere tutte le 8784 righe del file. Locale e pagina pubblica sono gia' aggiornati.
 - **Supabase**: l'account non risulta ancora fatto (nel progetto non c'è nessuna chiave). È il punto
   fermo su cui è rimasto tutto il resto.
+### 1. La grafica — ✅ **fatta il 19 settembre**
+Obiettivo dichiarato: non "funzionare", ma **essere un must-have fra i compagni di classe di
+Diego**. Due metà, tutte e due fatte:
 
----
+- ✅ **Le reazioni** (`js/juice.js`): punteggio che sale contando, serie a tre gradini,
+  coriandoli, lampo di esito, numeri che volano via dal tasto toccato.
+- ✅ **La faccia: arcade.** Scelta fra tre direzioni guardate al telefono. Il mondo è un
+  cabinato da sala giochi — notte, neon, tasti con lo spessore della plastica. Caratteri
+  nuovi (Bungee per le insegne, Archivo per il testo), icone **disegnate** al posto delle
+  emoji per le materie e le tessere, e i **16 temi diventati il tuo neon** invece di 16
+  mondi diversi: nessun tema può più nascere illeggibile, e chi aveva comprato un tema ce
+  l'ha ancora.
 
-## Cosa manca, in ordine
-
-### 1. La grafica — **è la priorità adesso**
-Obiettivo dichiarato il 19 settembre: non "funzionare", ma **essere un must-have fra i compagni
-di classe di Diego**. È un obiettivo diverso da quello di partenza (un gioco per due fratelli) e
-cambia le priorità: deve reggere il confronto con quello che i ragazzi hanno già sul telefono.
-
-Due metà indipendenti, e si è deciso di fare prima la seconda perché si sente subito e non
-vincola la prima:
-
-- ✅ **Le reazioni — fatte il 19/09.** `js/juice.js`: punteggio che sale contando, serie a tre
-  gradini, coriandoli, lampo di esito, numeri che volano via dal tasto toccato.
-- ⬜ **La faccia — da fare.** Quello che non va, in ordine di peso:
-  1. **tutto è la stessa card bianca** sul solito cielo azzurro — home, menu, domanda, negozio,
-     risultato. Nessuna gerarchia, niente che dica "gioco" invece di "sito della scuola";
-  2. **le emoji come unica grafica**: si vedono diverse su ogni telefono e sono il segnale più
-     forte di una cosa fatta in fretta. Servono icone disegnate in SVG *dentro il codice*
-     (nessun file, nessun problema di diritti, nitide a ogni dimensione), almeno per le sei
-     materie, la cassa, la stella e il livello;
-  3. **la scala tipografica è piatta**: tutto sta fra 15 e 25px, niente è grande davvero;
-  4. **i 16 temi fanno sembrare il gioco configurabile, non disegnato.** Un must-have ha *una*
-     faccia che si riconosce da lontano.
-
-  Metodo concordato: prima **tre direzioni** (menu, domanda, risultato) costruite col markup
-  vero, da guardare al telefono e sceglierne una; poi si implementa quella. Tutti i colori sono
-  già variabili CSS, quindi la pelle si cambia senza riscrivere il gioco.
+Restano emoji gli **avatar** (sono la faccia del giocatore, non un'icona) e le decorazioni
+di un momento. Il dettaglio di ogni scelta sta in `CLAUDE.md`, sezione «La faccia arcade».
 
 ### 2. L'archivio condiviso (Supabase) — **serve un passo tuo**
 È il blocco che tiene ferme le cose 3 e 4. Da fare:

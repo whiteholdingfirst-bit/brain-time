@@ -675,7 +675,10 @@
   function renderSoloResult(o) {
     var run = o.run, p = o.p;
     var acc = run.answered ? run.correct / run.answered : 0;
-    var ico = run.perfect ? '🏆' : acc >= 0.7 ? '🎉' : acc >= 0.4 ? '💪' : '📚';
+    /* Le icone grosse del risultato sono disegnate: e' la schermata che
+       si guarda piu' a lungo di tutte. Le emoji restano dove sono
+       decorazione di un momento (la bandierina, la clessidra). */
+    var ico = BT.icona(run.perfect ? 'coppa' : acc >= 0.7 ? 'scintilla' : acc >= 0.4 ? 'bersaglio' : 'lampadina');
     var titolo = run.perfect ? 'Partita perfetta!' : acc >= 0.7 ? 'Bella prova!' : acc >= 0.4 ? 'Puoi fare di pi&ugrave;' : 'Serve allenamento';
 
     var html = '<div class="res-card">' +
@@ -689,7 +692,7 @@
         'Nell\'<b>Allenamento</b> puoi provare le stesse domande senza rischiare nulla.</div>';
     }
 
-    html += '<div class="res-reward">+' + run.coins + ' coppe 🏆' +
+    html += '<div class="res-reward">+' + run.coins + ' coppe <svg class="ic"><use href="#i-coppa"/></svg>' +
         (run.perfect ? ' &nbsp;(bonus partita perfetta!)' : '') + '</div>';
 
     if (o.levelUp.levelUp) {
@@ -714,7 +717,7 @@
     var run = o.run, p = o.p;
     var tot = run.answered + run.skipped;
     var acc = run.answered ? run.correct / run.answered : 0;
-    var ico = acc >= 0.9 ? '🎓' : acc >= 0.6 ? '💪' : '📚';
+    var ico = BT.icona(acc >= 0.9 ? 'bersaglio' : acc >= 0.6 ? 'scintilla' : 'lampadina');
     var titolo = acc >= 0.9 ? 'Allenamento perfetto!'
                : acc >= 0.6 ? 'Bell\'allenamento!'
                : 'Allenamento finito';
@@ -736,7 +739,7 @@
         '<button class="btn btn-ghost" id="res-menu">Torna al menu</button>' +
         '<button class="btn btn-primary" id="res-again">Allenati ancora</button>' +
       '</div>' +
-      '<button class="btn btn-gold btn-block" id="res-gioca">Adesso gioca sul serio 🏆</button>' +
+      '<button class="btn btn-gold btn-block" id="res-gioca">Adesso gioca sul serio <svg class="ic"><use href="#i-coppa"/></svg></button>' +
       bottoneCassa(p) + '</div>';
 
     var box = document.getElementById('result-body');
@@ -750,7 +753,7 @@
   function renderDuelResult(out, vincitore) {
     var a = out[0], b = out[1];
     var titolo = vincitore === null ? 'Pareggio!' : 'Vince ' + BT.esc(out[vincitore].p.name) + '!';
-    var ico = vincitore === null ? '🤝' : '🏆';
+    var ico = BT.icona(vincitore === null ? 'spade' : 'coppa');
 
     function side(o, win) {
       var acc = o.run.answered ? Math.round(o.run.correct / o.run.answered * 100) : 0;
@@ -773,7 +776,7 @@
         '<div class="duel-vs">VS</div>' + side(b, vincitore === 1) + '</div>' +
       '<div class="res-reward">Coppe: ' + BT.esc(a.p.name) + ' +' +
         (a.run.coins + (vincitore === 0 ? 10 : 0)) + ' &nbsp;·&nbsp; ' +
-        BT.esc(b.p.name) + ' +' + (b.run.coins + (vincitore === 1 ? 10 : 0)) + ' 🏆</div>';
+        BT.esc(b.p.name) + ' +' + (b.run.coins + (vincitore === 1 ? 10 : 0)) + ' <svg class="ic"><use href="#i-coppa"/></svg></div>';
 
     out.forEach(function (o) {
       if (o.levelUp.levelUp) {

@@ -119,7 +119,7 @@
     if (dado < 0.42) {
       var coppe = BT.rnd(rar.coppe[0], rar.coppe[1]);
       p.coins += coppe;
-      return { tipo: 'coppe', ico: '🏆', titolo: '+' + coppe + ' coppe',
+      return { tipo: 'coppe', ico: '<svg class="ic"><use href="#i-coppa"/></svg>', titolo: '+' + coppe + ' coppe',
         testo: 'Da spendere al Negozio in aiuti, avatar o temi.' };
     }
     /* aiuti */

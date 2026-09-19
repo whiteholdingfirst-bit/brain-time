@@ -62,7 +62,7 @@
     var n = BT.sfide.perMe(player).length;
     el.innerHTML = (n ? '<span class="tp-bell" title="Sfide in arrivo">⚔️ ' + n + '</span>' : '') +
       '<span>' + BT.avatar(player.avatar) + '</span>' +
-      '<span class="tp-coins">' + player.coins + ' 🏆</span>';
+      '<span class="tp-coins">' + player.coins + ' <svg class="ic"><use href="#i-coppa"/></svg></span>';
   };
 
   /* ================= stato della connessione ================= */
@@ -110,7 +110,7 @@
           '<div class="pf-name">' + BT.esc(p.name) +
             (inArrivo ? ' <span class="pf-badge">⚔️ ' + inArrivo + '</span>' : '') + '</div>' +
           '<div class="pf-meta">Livello ' + lvl + ' &middot; ' + BT.levelTitle(lvl) +
-          ' &middot; ' + p.coins + ' 🏆</div>' +
+          ' &middot; ' + p.coins + ' <svg class="ic"><use href="#i-coppa"/></svg></div>' +
         '</div>' +
         '<div class="pf-lvl">' + BT.classeBreve(p) + '</div>';
       row.onclick = function () { selectPlayer(p); };
@@ -277,7 +277,7 @@
           ' &middot; ' + BT.nomeClasse(player) +
           ' <button class="pc-edit" id="pc-modifica" title="Cambia nome, faccia o et&agrave;">' +
           '&#9998; modifica</button></div></div>' +
-        '<div class="pc-coins"><b>' + player.coins + '</b><span>coppe 🏆</span></div>' +
+        '<div class="pc-coins"><b>' + player.coins + '</b><span>coppe <svg class="ic"><use href="#i-coppa"/></svg></span></div>' +
       '</div>' +
       '<div class="xp-wrap">' +
         '<div class="xp-line"><span>' + player.xp + ' punti cervello</span>' +
@@ -465,7 +465,7 @@
         'Se sbagli non perdi niente e vedi subito la risposta giusta con la spiegazione.';
     } else {
       avviso.className = 'modo-box modo-gioca';
-      avviso.innerHTML = '🏆 <b>Gioca:</b> ogni risposta giusta vale punti, ' +
+      avviso.innerHTML = '<svg class="ic"><use href="#i-coppa"/></svg> <b>Gioca:</b> ogni risposta giusta vale punti, ' +
         'ogni sbagliata te ne toglie <b>' + scelta.penalita + '</b>. Il punteggio non scende sotto zero.';
     }
   }
@@ -729,7 +729,7 @@
             (have ? '<div class="shop-own">Ne hai ' + have + '</div>' : '') +
             (aperto ? '' : '<div class="shop-lock">🔒 ' + BT.comeSbloccare(pu) + '</div>') + '</div>' +
           '<button class="shop-buy' + (aperto ? '' : ' bloccato') + '">' +
-            (aperto ? pu.cost + ' 🏆' : 'liv. ' + pu.liv) + '</button>';
+            (aperto ? pu.cost + ' <svg class="ic"><use href="#i-coppa"/></svg>' : 'liv. ' + pu.liv) + '</button>';
 
         var btn = item.querySelector('.shop-buy');
         btn.disabled = !aperto || player.coins < pu.cost;
@@ -763,7 +763,7 @@
           '<div class="shop-desc">' + art.desc + '</div>' +
           (inUso ? '<div class="shop-own">In uso adesso</div>' : '') + '</div>' +
         (mio ? '<button class="shop-usa">' + (inUso ? '✓ In uso' : 'Usa') + '</button>'
-             : '<button class="shop-buy">' + art.cost + ' 🏆</button>');
+             : '<button class="shop-buy">' + art.cost + ' <svg class="ic"><use href="#i-coppa"/></svg></button>');
 
       var compra = item.querySelector('.shop-buy');
       if (compra) {
@@ -1011,7 +1011,7 @@
           '<div class="res-stat"><b>' + e.mosse + '</b><span>mosse</span></div>' +
           '<div class="res-stat"><b>+' + e.punti + '</b><span>punti</span></div>' +
         '</div>' +
-        '<div class="res-reward">+' + e.coppe + ' coppe 🏆' +
+        '<div class="res-reward">+' + e.coppe + ' coppe <svg class="ic"><use href="#i-coppa"/></svg>' +
           (e.primaVolta ? '' : ' &nbsp;(livello gi&agrave; fatto: premio ridotto)') + '</div>';
       if (e.salita.levelUp) {
         html += '<div class="res-levelup">🚀 Sei salito al <b>livello ' + e.salita.to +
