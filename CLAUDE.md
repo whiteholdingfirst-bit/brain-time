@@ -955,3 +955,22 @@ andata al primo. E' la stessa ragione per cui la risposta scelta prende `.chosen
   quattro e sotto i 400px si schiacciavano. Adesso va a capo (nome+serie / domanda+punti).
 - **`#g-score` e' `display:inline-block`**: su uno `<span>` in linea la `transform` non fa niente
   e il punteggio non pulsava.
+
+## Il controllo anti-sovrascrittura e' cambiato (19/09/2026)
+
+L'autorizzazione permanente a forzare, scritta piu' su, **non basta piu' in un caso**: se la
+versione viva e' stata salvata *da dentro la pagina* (qualcuno ci ha giocato dopo l'ultima
+pubblicazione fatta da qui), il server **rifiuta `force: true`**. Testuale:
+
+> The server refuses force:true over a version saved from inside the page; only a publish built
+> on that version is accepted.
+
+L'unica strada rimasta e' **leggere per intero il file scaricato** (8784 righe, ~440 KB: una
+decina di chiamate) e ripubblicare partendo da quello. Il rito dei quattro passi resta valido
+quando l'ultima versione online e' quella pubblicata da qui.
+
+> **Conseguenza pratica, da rispettare:** la lettura integrale costa parecchio, quindi
+> **si raggruppano piu' modifiche in un unico deploy**. Non vale la pena pagarla due volte a
+> distanza di poco. Se una modifica e' gia' su GitHub Pages e in locale, la pagina di famiglia
+> puo' aspettare il deploy successivo: basta segnarlo in `LAVORI-IN-CORSO.md` perche' non si
+> perda per strada.

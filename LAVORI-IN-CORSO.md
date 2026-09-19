@@ -54,6 +54,11 @@ Tutto è salvo e allineato: nessuna modifica in sospeso, locale e GitHub sono al
   (`js/juice.js`). È la prima metà del lavoro sulla grafica: quella che **si sente**.
 - **Cassa Suprema**: in cima alla scala delle rarita' si scelgono tre stelle, e una su tre
   trasforma la cassa nella Suprema, il 50% in piu'.
+- ⚠️ **Pagina di famiglia: un giro indietro.** Ha le domande randomizzate e la cassa Suprema, non
+  ancora le reazioni. Il controllo anti-sovrascrittura adesso rifiuta la forzatura quando qualcuno
+  ha giocato li' sopra (e il 19/09 e' successo), e l'unica strada e' rileggere tutto il file: si
+  paga una volta sola, **insieme al prossimo deploy della grafica**. Locale e pagina pubblica sono
+  gia' aggiornati.
 - **Supabase**: l'account non risulta ancora fatto (nel progetto non c'è nessuna chiave). È il punto
   fermo su cui è rimasto tutto il resto.
 
