@@ -1331,6 +1331,13 @@
     var esito = BT.casse.apri(p, suprema);
     if (!esito) { BT.show('screen-menu'); BT.renderMenu(); return; }
     BT.sfx.play('vittoria');
+    /* I coriandoli crescono con la rarita': la Rara ne fa una spruzzata,
+       la Suprema riempie lo schermo. E' il momento piu' grosso del gioco,
+       l'unico che valga la pena far vedere a un amico. */
+    if (BT.juice) {
+      var rar = esito.rarita || {};
+      BT.juice.coriandoli(rar.suprema ? 200 : 26 * (esito.molt || 1));
+    }
     mostraPremi(p, esito);
   }
 

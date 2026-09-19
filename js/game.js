@@ -30,10 +30,22 @@
     return Math.max(10, Math.round(BT.LEVELS[p.level].time * G.diff.tempo));
   }
 
-  /* in allenamento il punteggio non c'e': l'elemento non esiste */
-  function aggiornaPunteggio(run) {
+  /* In allenamento il punteggio non c'e': l'elemento non esiste.
+     'punti' serve solo a sapere da dove far partire il conteggio: il
+     valore finale lo scrive comunque BT.juice.conta come prima cosa,
+     quindi anche senza animazione il numero resta giusto. */
+  function aggiornaPunteggio(run, punti) {
     var el = document.getElementById('g-score');
-    if (el) el.textContent = run.score;
+    if (!el) return;
+    var prima = run.score - (punti || 0);
+    if (BT.juice) BT.juice.conta(el, prima, run.score);
+    else el.textContent = run.score;
+
+    if (punti > 0 && BT.juice && BT.juice.ok()) {
+      el.classList.remove('incassa');
+      void el.offsetWidth;                  /* riavvia l'animazione */
+      el.classList.add('incassa');
+    }
   }
 
   var KEYS = ['A', 'B', 'C', 'D'];
@@ -141,10 +153,12 @@
         : '<span id="g-score">' + run.score + '</span><small>pt</small>';
 
       var info = BT.catInfo(q.cat);
+      document.getElementById('q-cat').innerHTML = info.ico + ' ' + (q.tag || info.name);
+
+      /* La serie sta nella barra in cima, non piu' scritta di fianco alla
+         materia: e' un premio, e un premio si guarda. */
       var serie = G.streaks[G.turn];
-      document.getElementById('q-cat').innerHTML =
-        info.ico + ' ' + (q.tag || info.name) +
-        (serie >= 3 ? ' &nbsp;·&nbsp; 🔥 serie x' + streakMult(serie) : '');
+      if (BT.juice) BT.juice.combo(serie, streakMult(serie));
 
       var board = document.getElementById('q-board');
       if (q.board) {
@@ -225,7 +239,7 @@
         }
       }
 
-      aggiornaPunteggio(run);
+      aggiornaPunteggio(run, punti);
 
       var esito = { q: q, scelta: i, giusto: giusto, punti: punti, player: G.players[t] };
 
@@ -236,6 +250,7 @@
           if (btns[q.correct]) btns[q.correct].classList.add('right');
           BT.sfx.play('sbagliato');
         }
+        reazione(esito, btns[i >= 0 ? i : q.correct]);
         showSoloFeedback(esito);
       } else {
         // duello: nessun indizio prima che abbiano risposto entrambi
@@ -366,6 +381,17 @@
       }
 
       BT.show('screen-result');
+
+      /* I coriandoli di fine partita: solo per le cose che capitano
+         davvero di rado. Il passaggio di livello e' la piu' rara di
+         tutte (e porta anche la cassa), quindi ne prende il doppio. */
+      if (BT.juice) {
+        var salito = out.some(function (o) { return o.levelUp && o.levelUp.levelUp; });
+        var perfetta = tipo !== 'allena' && out.some(function (o) { return o.run.perfect; });
+        if (salito) BT.juice.coriandoli(140);
+        else if (perfetta) BT.juice.coriandoli(70);
+      }
+
       G = null;
 
       // gancio usato dalla versione online per registrare le sfide a distanza
@@ -499,6 +525,36 @@
   }
 
   /* ================= feedback allenamento singolo ================= */
+  /* =========================================================
+     La reazione alla risposta (solo in partita singola)
+
+     Nel duello NON si fa niente di tutto questo, ed e' una regola, non
+     una dimenticanza: il secondo giocatore guarda lo stesso schermo, e
+     un lampo verde o una serie che sale gli direbbero com'e' andata al
+     primo. Li' si aspetta il confronto.
+     ========================================================= */
+  function reazione(e, bottone) {
+    if (!BT.juice) return;
+    var J = BT.juice;
+
+    J.lampo(e.giusto ? 'ok' : 'no');
+
+    if (e.punti) {
+      var da = J.centro(bottone) || J.centro(document.querySelector('#screen-game .q-card'));
+      J.volante(da, (e.punti > 0 ? '+' : '') + e.punti, e.punti > 0 ? 'su' : 'giu');
+    }
+
+    var serie = G.streaks[G.turn];
+    J.combo(serie, streakMult(serie));
+
+    /* I coriandoli solo dove il moltiplicatore cambia davvero (3, 5, 8):
+       se scoppiassero a ogni risposta giusta smetterebbero di voler dire
+       qualcosa dopo due partite. */
+    if (e.giusto && (serie === 3 || serie === 5 || serie === 8)) {
+      J.coriandoli(serie === 8 ? 80 : 45, J.centro(document.getElementById('g-combo')));
+    }
+  }
+
   function showSoloFeedback(e) {
     var fb = document.getElementById('q-feedback');
     var titolo = e.giusto

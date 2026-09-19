@@ -17,7 +17,7 @@
    una richiesta in piu' all'avvio non si sente, mentre restare
    indietro di una versione si sente eccome.
    ========================================================= */
-var VERSIONE = 'brain-time-2026-09-19a';
+var VERSIONE = 'brain-time-2026-09-19b';
 
 var FILE = [
   './',
@@ -30,6 +30,7 @@ var FILE = [
   './icone/icona-180.png',
   './js/util.js',
   './js/sfx.js',
+  './js/juice.js',
   './js/foto.js',
   './js/storage.js',
   './js/data-math.js',

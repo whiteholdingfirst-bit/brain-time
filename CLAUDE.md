@@ -44,7 +44,7 @@ un'altra classifica.
 
 ## Ordine di caricamento
 
-`util → sfx → foto → storage → data-* (math, logic, lang, history, culture, chess) → bank → game → app`
+`util → sfx → juice → foto → storage → data-* (math, logic, lang, history, culture, chess) → bank → game → app`
 (definito in `index.html`, non cambiarlo).
 
 ## Modello dati
@@ -900,3 +900,58 @@ I numeri sono **calcolati** dalla Segreta (`piu50()`), non scritti a mano: la pr
 Dopo il tocco si scoprono **tutte e tre**: se non si vedesse dov'era la corona, sembrerebbe che
 il gioco decida dopo. Colori in `css/style.css` (`--rar-supremo`, `.rar-supremo`,
 `.stella-tre-riga`); le tre stelle sono in `clamp()` perche' su telefono ci stiano in riga.
+
+---
+
+# Il "succo": reazioni e animazioni (`js/juice.js`, 19/09/2026)
+
+Richiesta: *"la grafica non funziona, se vogliamo che diventi un must have tra i miei compagni
+di classe dobbiamo migliorarla"*. Scelta fatta insieme: **prima le reazioni, poi la faccia**.
+Il motivo e' che le due cose sono indipendenti — il succo funziona con qualunque palette — e
+il succo e' quello che si sente subito. La grafica vera (palette, tipografia, icone disegnate
+al posto delle emoji) e' il passo dopo.
+
+## Cosa fa
+
+| effetto | dove scatta |
+|---|---|
+| punteggio che sale contando | a ogni risposta che da' punti |
+| "+142" che vola via dal tasto toccato | idem, verde in su / rosso in giu' |
+| velo verde o rosso su tutto lo schermo | a ogni risposta, brevissimo |
+| serie (combo) con tre gradini | 3, 5, 8 risposte giuste di fila |
+| coriandoli | ai tre gradini della serie, a fine partita perfetta, al passaggio di livello, all'apertura di una cassa (crescono con la rarita') |
+
+## Le due regole del file — non toglierle
+
+1. **Nessun effetto deve essere necessario.** I numeri vengono scritti **subito** al valore
+   finale e l'animazione li rincorre, mai il contrario. Nel pannello di anteprima (e in
+   qualunque scheda in secondo piano) `requestAnimationFrame` non parte proprio: se il
+   punteggio dipendesse dall'animazione, li' resterebbe fermo a zero. Provato apposta
+   spegnendo `requestAnimationFrame`: i punti restano giusti.
+2. **`prefers-reduced-motion` si rispetta davvero.** `BT.juice.ok()` risponde no e non si
+   crea nessun elemento. Il blocco `@media` generale azzera le durate, ma coriandoli, velo e
+   numeri volanti sono **elementi interi**: vanno nascosti, non rallentati.
+   > Eccezione voluta: la **serie resta visibile** anche a moto ridotto. Non e' decorazione,
+   > e' un'informazione (a quanto sta il tuo moltiplicatore). Sparisce solo l'animazione.
+
+## Nel duello non succede niente, ed e' una regola
+
+`reazione()` viene chiamata **solo** in partita singola. Nel duello i due guardano lo stesso
+schermo: un velo verde, un "+270" o una serie che sale direbbero al secondo giocatore com'e'
+andata al primo. E' la stessa ragione per cui la risposta scelta prende `.chosen` e mai
+`.right`/`.wrong`. Se un domani si tocca `answer()`, questo va ricontrollato.
+
+## Dettagli che sembrano pignoleria e non lo sono
+
+- **Coriandoli solo dove conta.** Ai gradini 3/5/8, non a ogni risposta giusta: se scoppiassero
+  sempre smetterebbero di voler dire qualcosa dopo due partite.
+- **Particelle tagliate sotto i 520px** (70 invece di 140). Un effetto che scatta e' peggio di
+  nessun effetto.
+- **Rete di sicurezza sulla tela** (7 secondi): `requestAnimationFrame` si ferma quando si esce
+  dall'app, e senza quello la tela resterebbe con sopra un fermo immagine di coriandoli.
+- **La serie non sta nel markup.** La costruisce `BT.juice.combo()`: se stesse in `index.html`
+  andrebbe messa anche in `index-online.html`, e prima o poi le due copie divergerebbero.
+- **`.game-head` ora e' `flex-wrap:wrap`**: con la serie accesa gli elementi in fila diventano
+  quattro e sotto i 400px si schiacciavano. Adesso va a capo (nome+serie / domanda+punti).
+- **`#g-score` e' `display:inline-block`**: su uno `<span>` in linea la `transform` non fa niente
+  e il punteggio non pulsava.

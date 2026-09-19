@@ -303,7 +303,12 @@ body::after{
 .pass-sub{color:var(--inchiostro-soft); font-size:17.5px; margin:12px 0 22px; line-height:1.5}
 
 /* ---------- gioco ---------- */
-.game-head{display:flex; align-items:center; gap:10px; color:#fff; margin-bottom:9px}
+.game-head{
+  display:flex; align-items:center; gap:10px; color:#fff; margin-bottom:9px;
+  /* va a capo: con la serie accesa gli elementi in fila diventano quattro,
+     e su un telefono stretto senza questo si schiacciano l'uno sull'altro */
+  flex-wrap:wrap;
+}
 .g-player{font-weight:600; font-size:19px; display:flex; align-items:center; gap:7px}
 .g-progress{margin-left:auto; font-size:17px; background:rgba(255,255,255,.24); padding:4px 12px; border-radius:999px}
 .g-score{font-weight:700; font-size:25px}
@@ -1182,3 +1187,83 @@ body{ touch-action:manipulation }
    deve fare niente da solo, ne' scorrere ne' ingrandire. */
 #laby-canvas, .dpad, .dpad button{ touch-action:none; user-select:none; -webkit-user-select:none }
 .dpad button{ -webkit-touch-callout:none }
+
+
+/* =========================================================
+   IL SUCCO — reazioni, coriandoli, serie
+   Tutto qui dentro e' decorazione: sta sopra il gioco, non ci
+   parla, e sparisce da solo. Niente di cliccabile.
+   ========================================================= */
+
+/* ---------- il numero che vola via ---------- */
+.volante{
+  position:fixed; z-index:60; pointer-events:none;
+  transform:translate(-50%,-50%);
+  font-family:inherit; font-weight:800; font-size:30px;
+  text-shadow:0 2px 0 rgba(0,0,0,.18);
+  animation:vola 1.1s cubic-bezier(.2,.8,.3,1) forwards;
+  white-space:nowrap;
+}
+.volante.su{color:var(--oro)}
+.volante.giu{color:var(--rosso)}
+@keyframes vola{
+  0%  {opacity:0; transform:translate(-50%,-50%) scale(.6)}
+  18% {opacity:1; transform:translate(-50%,-50%) scale(1.18)}
+  32% {transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0; transform:translate(-50%,-190%) scale(.95)}
+}
+
+/* ---------- il velo di esito ----------
+   Basso di proposito: deve arrivare con la coda dell'occhio,
+   non coprire la risposta che il giocatore sta leggendo. */
+.velo{
+  position:fixed; inset:0; z-index:55; pointer-events:none;
+  opacity:0; animation:velo-passa .48s ease-out forwards;
+}
+.velo-ok{background:radial-gradient(circle at 50% 60%, rgba(47,191,113,.42), rgba(47,191,113,0) 68%)}
+.velo-no{background:radial-gradient(circle at 50% 60%, rgba(232,84,74,.40), rgba(232,84,74,0) 68%)}
+@keyframes velo-passa{0%{opacity:0}22%{opacity:1}100%{opacity:0}}
+
+/* ---------- coriandoli ---------- */
+.coriandoli-tela{position:fixed; inset:0; z-index:58; pointer-events:none}
+
+/* ---------- la serie ----------
+   Sta nella barra in cima alla domanda, accanto al nome. Cresce di
+   tre gradini come i moltiplicatori del punteggio (3, 5, 8): il
+   colore dice a colpo d'occhio quanto vale, senza leggere il numero. */
+.combo{
+  display:flex; align-items:center; gap:5px;
+  padding:4px 11px 4px 8px; border-radius:999px;
+  font-weight:800; font-size:16px; line-height:1;
+  background:rgba(255,255,255,.26); color:#fff;
+  white-space:nowrap; flex:none;
+}
+.combo-n{font-size:19px}
+.combo-x{font-size:14px; opacity:.9; font-weight:700}
+.combo-fuoco{font-size:17px; display:inline-block}
+.combo-1{background:rgba(255,255,255,.3)}
+.combo-2{background:linear-gradient(90deg,#f5b826,#ef8b1c); color:#4a3200; box-shadow:0 0 14px rgba(245,184,38,.6)}
+.combo-3{
+  background:linear-gradient(90deg,#ff6a3d,#e8544a,#c9342b); color:#fff;
+  box-shadow:0 0 18px rgba(232,84,74,.75);
+}
+.combo-3 .combo-fuoco{animation:fiammata .8s ease-in-out infinite}
+@keyframes fiammata{50%{transform:scale(1.25) rotate(-6deg)}}
+.combo-cresce{animation:combo-colpo .42s cubic-bezier(.2,1.5,.4,1)}
+@keyframes combo-colpo{
+  0%{transform:scale(1)} 40%{transform:scale(1.35)} 100%{transform:scale(1)}
+}
+
+/* il punteggio che pulsa quando arrivano punti.
+   display:inline-block perche' su uno <span> in linea la transform non fa niente */
+#g-score{display:inline-block}
+#g-score.incassa{animation:incassa .45s cubic-bezier(.2,1.5,.4,1)}
+@keyframes incassa{0%{transform:scale(1)}38%{transform:scale(1.3)}100%{transform:scale(1)}}
+
+/* ---------- chi ha chiesto di non animare ----------
+   Il blocco generale piu' su azzera gia' le durate, ma i coriandoli e
+   il velo sono elementi interi: vanno nascosti, non rallentati. */
+@media (prefers-reduced-motion:reduce){
+  .volante,.velo,.coriandoli-tela{display:none !important}
+  .combo-3 .combo-fuoco{animation:none}
+}

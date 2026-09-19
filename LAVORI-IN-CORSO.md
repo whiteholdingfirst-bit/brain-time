@@ -50,6 +50,8 @@ Tutto è salvo e allineato: nessuna modifica in sospeso, locale e GitHub sono al
 - **Domande**: due partite di fila non danno piu' le stesse domande (era il difetto piu'
   visibile: Diego e Gabri si ritrovavano lo stesso quiz). Ogni giocatore si porta dietro la
   memoria di quelle gia' viste.
+- **Reazioni**: punteggio che sale contando, serie a tre gradini, coriandoli, lampo di esito
+  (`js/juice.js`). È la prima metà del lavoro sulla grafica: quella che **si sente**.
 - **Cassa Suprema**: in cima alla scala delle rarita' si scelgono tre stelle, e una su tre
   trasforma la cassa nella Suprema, il 50% in piu'.
 - **Supabase**: l'account non risulta ancora fatto (nel progetto non c'è nessuna chiave). È il punto
@@ -59,8 +61,33 @@ Tutto è salvo e allineato: nessuna modifica in sospeso, locale e GitHub sono al
 
 ## Cosa manca, in ordine
 
-### 1. L'archivio condiviso (Supabase) — **serve un passo tuo**
-È il blocco che tiene ferme le cose 2 e 3. Da fare:
+### 1. La grafica — **è la priorità adesso**
+Obiettivo dichiarato il 19 settembre: non "funzionare", ma **essere un must-have fra i compagni
+di classe di Diego**. È un obiettivo diverso da quello di partenza (un gioco per due fratelli) e
+cambia le priorità: deve reggere il confronto con quello che i ragazzi hanno già sul telefono.
+
+Due metà indipendenti, e si è deciso di fare prima la seconda perché si sente subito e non
+vincola la prima:
+
+- ✅ **Le reazioni — fatte il 19/09.** `js/juice.js`: punteggio che sale contando, serie a tre
+  gradini, coriandoli, lampo di esito, numeri che volano via dal tasto toccato.
+- ⬜ **La faccia — da fare.** Quello che non va, in ordine di peso:
+  1. **tutto è la stessa card bianca** sul solito cielo azzurro — home, menu, domanda, negozio,
+     risultato. Nessuna gerarchia, niente che dica "gioco" invece di "sito della scuola";
+  2. **le emoji come unica grafica**: si vedono diverse su ogni telefono e sono il segnale più
+     forte di una cosa fatta in fretta. Servono icone disegnate in SVG *dentro il codice*
+     (nessun file, nessun problema di diritti, nitide a ogni dimensione), almeno per le sei
+     materie, la cassa, la stella e il livello;
+  3. **la scala tipografica è piatta**: tutto sta fra 15 e 25px, niente è grande davvero;
+  4. **i 16 temi fanno sembrare il gioco configurabile, non disegnato.** Un must-have ha *una*
+     faccia che si riconosce da lontano.
+
+  Metodo concordato: prima **tre direzioni** (menu, domanda, risultato) costruite col markup
+  vero, da guardare al telefono e sceglierne una; poi si implementa quella. Tutti i colori sono
+  già variabili CSS, quindi la pelle si cambia senza riscrivere il gioco.
+
+### 2. L'archivio condiviso (Supabase) — **serve un passo tuo**
+È il blocco che tiene ferme le cose 3 e 4. Da fare:
 
 1. creare l'account su supabase.com, progetto in **Europa**, piano Free;
 2. **Authentication → Sign In / Providers**, accendere **Anonymous sign-ins** (i bambini non hanno
@@ -76,24 +103,24 @@ Le decisioni di privacy sono già prese e scritte qui sotto. Il codice di sincro
 `BT.fondi()` di `js/fusione.js`: ogni dispositivo tiene la sua copia, si gioca anche senza rete, e
 al ritorno del collegamento i progressi si fondono.
 
-### 2. Classifica e community
+### 3. Classifica e community
 Dopo Supabase. Classifica fra amici invitati, **senza messaggi**.
 
-### 3. Una banca di domande per i piccoli
+### 4. Una banca di domande per i piccoli
 Sotto gli otto anni le domande restano quelle della quinta elementare, quindi troppo difficili
 (il limite è dichiarato anche nell'interfaccia). Serve una quarta banca — colori, forme, contare,
 versi degli animali — in tutte le categorie. È lavoro di contenuti, non di codice, e si può fare
 **senza aspettare Supabase**.
 
-### 4. La traduzione dell'interfaccia
+### 5. La traduzione dell'interfaccia
 Menu, pulsanti e messaggi in inglese, francese, tedesco e spagnolo: circa 400 frasi da estrarre e
 ricablare. Le domande del quiz resterebbero in italiano, perché sono programma scolastico italiano.
 La voce nelle Impostazioni arriverà **insieme** alla traduzione, non prima.
 
-### 5. Riaccendere il limite dei 30 minuti
+### 6. Riaccendere il limite dei 30 minuti
 `ATTIVO = true` in `js/limite.js`, quando il gioco è considerato finito. Adesso è spento.
 
-### 6. App Store e Google Play — **messo in attesa di proposito**
+### 7. App Store e Google Play — **messo in attesa di proposito**
 Deciso il 30/08: si aspetta. Costano 99 $/anno (Apple) e 25 $ (Google), hanno revisioni
 aggiuntive perché è un gioco per bambini, e ogni aggiornamento ripassa dalla revisione. L'app
 installabile che c'è già copre il 90% della differenza.
