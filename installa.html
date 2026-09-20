@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brain Time &mdash; mettilo sul telefono</title>
+<meta name="description" content="Come mettere Brain Time sul telefono, sul tablet o sul computer: diventa un'app vera, con la sua icona.">
+<meta name="theme-color" content="#0b0d1f">
+<link rel="icon" href="icona.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icone/icona-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Archivo:wght@400;600;700&display=swap">
+<style>
+/* Stessa palette del gioco: notte e neon. Il foglio e' tutto qui dentro
+   apposta - questa pagina deve reggersi da sola anche se un domani il
+   CSS del gioco cambia. */
+:root{
+  --fondo:#0b0d1f;
+  --fondo-2:#131736;
+  --carta:#181d42;
+  --carta-2:#212759;
+  --neon:#31d8ff;
+  --neon-cupo:#1b7fa8;
+  --testo:#eaf2ff;
+  --testo-soft:#a9b6d8;
+  --oro:#ffc83d;
+  --bordo:rgba(49,216,255,.28);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--fondo); color:var(--testo);
+  font-family:Archivo,"Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:16px; line-height:1.6;
+  background-image:
+    radial-gradient(circle at 18% 8%, rgba(49,216,255,.14), transparent 45%),
+    radial-gradient(circle at 84% 22%, rgba(255,200,61,.10), transparent 40%);
+  background-attachment:fixed;
+}
+.pagina{max-width:760px; margin:0 auto; padding:0 18px calc(48px + env(safe-area-inset-bottom,0px))}
+header{padding:calc(38px + env(safe-area-inset-top,0px)) 0 8px; text-align:center}
+.marchio{
+  font-family:Bungee,Impact,"Arial Black",sans-serif; font-size:clamp(30px,8vw,46px);
+  letter-spacing:.02em; margin:0; line-height:1.05;
+}
+.marchio span{color:var(--neon)}
+.sotto{color:var(--testo-soft); margin:10px 0 0; font-size:17px}
+
+.indirizzo{
+  display:block; margin:26px auto 0; max-width:520px;
+  background:var(--carta); border:1px solid var(--bordo); border-radius:16px;
+  padding:16px 18px; text-align:center; text-decoration:none; color:var(--neon);
+  font-weight:700; word-break:break-all; font-size:17px;
+}
+.indirizzo:hover{border-color:var(--neon)}
+.indirizzo small{display:block; color:var(--testo-soft); font-weight:400; font-size:13.5px; margin-bottom:4px; letter-spacing:.06em; text-transform:uppercase}
+
+.qr{
+  margin:22px auto 0; max-width:300px; background:#fff; border-radius:20px;
+  padding:14px; box-shadow:0 0 0 1px var(--bordo), 0 18px 40px rgba(0,0,0,.45);
+}
+.qr img{display:block; width:100%; height:auto}
+.qr-nota{text-align:center; color:var(--testo-soft); font-size:14px; margin:12px 0 0}
+
+#installa{
+  display:none; margin:26px auto 0; padding:16px 26px; width:100%; max-width:340px;
+  font-family:Bungee,Impact,sans-serif; font-size:19px; letter-spacing:.03em;
+  color:#08202b; background:var(--neon); border:0; border-radius:16px;
+  box-shadow:0 5px 0 var(--neon-cupo); cursor:pointer;
+}
+#installa:active{transform:translateY(3px); box-shadow:0 2px 0 var(--neon-cupo)}
+#esito{text-align:center; color:var(--oro); font-weight:600; margin:14px 0 0; min-height:1.4em}
+
+h2{
+  font-family:Bungee,Impact,sans-serif; font-weight:400; font-size:20px;
+  margin:42px 0 0; letter-spacing:.02em;
+}
+.scheda{
+  background:var(--carta); border:1px solid var(--bordo); border-radius:18px;
+  padding:6px 20px 18px; margin-top:14px;
+}
+ol{margin:0; padding-left:22px}
+li{margin:12px 0}
+li b{color:var(--neon)}
+.avviso{
+  border-left:3px solid var(--oro); padding:2px 0 2px 14px; margin:16px 0 0;
+  color:var(--testo-soft); font-size:15px;
+}
+footer{margin-top:44px; text-align:center; color:var(--testo-soft); font-size:14px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="pagina">
+
+<header>
+  <h1 class="marchio">BRAIN<span>TIME</span></h1>
+  <p class="sotto">Non fa i compiti al posto tuo: ti rende pi&ugrave; forte.<br>
+     Ecco come metterlo sul telefono, come un&rsquo;app vera.</p>
+</header>
+
+<a class="indirizzo" href="https://whiteholdingfirst-bit.github.io/brain-time/">
+  <small>L&rsquo;indirizzo, uno solo</small>
+  whiteholdingfirst-bit.github.io/brain-time/
+</a>
+
+<div class="qr">
+  <img src="condividi/qr-brain-time-logo.png" width="1176" height="1176"
+       alt="Codice QR che apre Brain Time">
+</div>
+<p class="qr-nota">Inquadralo con la fotocamera del telefono.</p>
+
+<button id="installa">Installa adesso</button>
+<p id="esito"></p>
+
+<h2>iPhone e iPad</h2>
+<div class="scheda">
+  <ol>
+    <li>Apri questa pagina con <b>Safari</b> (non con un altro browser: su iPhone solo Safari sa farlo).</li>
+    <li>Tocca il tasto <b>Condividi</b> in basso &mdash; il quadrato con la freccia che esce.</li>
+    <li>Scorri l&rsquo;elenco e tocca <b>Aggiungi a Home</b>.</li>
+    <li>Tocca <b>Aggiungi</b> in alto a destra.</li>
+  </ol>
+  <p class="avviso">L&rsquo;icona compare fra le altre app. Da l&igrave; si apre a schermo intero,
+    senza la barra dell&rsquo;indirizzo, e funziona anche senza internet.</p>
+</div>
+
+<h2>Android</h2>
+<div class="scheda">
+  <ol>
+    <li>Apri questa pagina con <b>Chrome</b>.</li>
+    <li>Se compare il tasto <b>Installa adesso</b> qui sopra, premilo e hai finito.</li>
+    <li>Se non compare: tocca i <b>tre puntini</b> in alto a destra &rarr; <b>Installa app</b>
+      (a volte si chiama <i>Aggiungi a schermata Home</i>).</li>
+  </ol>
+</div>
+
+<h2>Computer (Windows e Mac)</h2>
+<div class="scheda">
+  <ol>
+    <li>Apri il gioco con <b>Chrome</b> oppure <b>Edge</b>.</li>
+    <li>Nella barra dell&rsquo;indirizzo, a destra, compare una piccola icona con lo
+      <b>schermo e la freccia in gi&ugrave;</b>: cliccala e scegli <b>Installa</b>.</li>
+    <li>Se non la vedi: menu <b>&#8942;</b> &rarr; <b>Trasmetti, salva e condividi</b> &rarr;
+      <b>Installa pagina come app</b>.</li>
+  </ol>
+  <p class="avviso">Con <b>Firefox</b> e <b>Safari su Mac</b> l&rsquo;installazione non c&rsquo;&egrave;:
+    il gioco funziona lo stesso, ma resta una scheda del browser. Al massimo si mette nei preferiti.</p>
+</div>
+
+<h2>Una cosa da sapere</h2>
+<div class="scheda">
+  <p>I punti restano <b>nel dispositivo dove giochi</b>. Installandolo sul telefono e sul
+    computer avrai due profili separati, ognuno coi suoi punti: non &egrave; un guasto, &egrave; che
+    questa versione funziona anche senza internet e quindi non ha nessun posto dove mandarli.</p>
+</div>
+
+<footer>Brain Time &mdash; un gioco di Diego, per chi ha voglia di diventare pi&ugrave; forte.</footer>
+
+</div>
+
+<script>
+/* Chrome e Edge avvisano prima di mostrare la loro icona di installazione:
+   se ci danno l'evento, offriamo un tasto vero invece delle istruzioni.
+   Su iPhone l'evento non arriva mai - li' restano i passi di Safari. */
+(function () {
+  'use strict';
+  var invito = null;
+  var tasto = document.getElementById('installa');
+  var esito = document.getElementById('esito');
+
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    invito = e;
+    tasto.style.display = 'block';
+  });
+
+  tasto.addEventListener('click', function () {
+    if (!invito) return;
+    invito.prompt();
+    invito.userChoice.then(function (scelta) {
+      if (scelta.outcome === 'accepted') {
+        esito.textContent = 'Installato. Cerca l’icona fra le tue app.';
+        tasto.style.display = 'none';
+      } else {
+        esito.textContent = 'Va bene, puoi installarlo anche dopo.';
+      }
+      invito = null;
+    });
+  });
+
+  window.addEventListener('appinstalled', function () {
+    tasto.style.display = 'none';
+    esito.textContent = 'Installato. Cerca l’icona fra le tue app.';
+  });
+
+  /* gia' aperto come app: non ha senso proporre di installarlo */
+  if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+    esito.textContent = 'Lo stai già usando come app.';
+  }
+})();
+</script>
+</body>
+</html>
