@@ -47,6 +47,28 @@
   }
 
   /* i tempi dei labirinti: per ogni livello vince il piu' veloce */
+  /* =========================================================
+     'viste' e' la memoria lunga delle domande gia' uscite: un elenco in
+     ordine, la prima e' la piu' lontana nel tempo.
+
+     Non si puo' unire e basta. Quell'elenco ha un tetto apposta (due
+     terzi della banca): se a ogni fusione crescesse, prima o poi
+     conterrebbe tutta la banca e non resterebbe piu' niente da pescare.
+     Quindi si tiene la coda - le piu' recenti - lunga quanto il piu'
+     lungo dei due elenchi di partenza.
+     ========================================================= */
+  function fondiViste(a, b) {
+    a = Array.isArray(a) ? a : [];
+    b = Array.isArray(b) ? b : [];
+    if (!a.length && !b.length) return [];
+    var tetto = Math.max(a.length, b.length);
+    var visto = {}, out = [];
+    a.concat(b).forEach(function (k) {
+      if (!visto[k]) { visto[k] = 1; out.push(k); }
+    });
+    return out.slice(Math.max(0, out.length - tetto));
+  }
+
   function fondiTempi(a, b) {
     var out = {}, k;
     a = a || {}; b = b || {};
@@ -121,6 +143,17 @@
         tema:   unisci(a.sbloccati && a.sbloccati.tema,   b.sbloccati && b.sbloccati.tema)
       },
       scoperte: unisci(a.scoperte, b.scoperte),
+
+      /* ⚠️ I traguardi DEVONO restare, e non e' un dettaglio: sono
+         l'elenco di quelli gia' riscossi. Perderli non vuol dire
+         perdere un premio, vuol dire riscuoterli di nuovo - alla prima
+         partita 'controlla()' li ridarebbe tutti, coppe e casse
+         comprese, perche' i punti quelle soglie le hanno gia' passate. */
+      traguardi: unisci(a.traguardi, b.traguardi),
+
+      /* le domande gia' viste: con un tetto, vedi fondiViste */
+      viste: fondiViste(a.viste, b.viste),
+
       byCat: fondiCat(a.byCat, b.byCat, base && base.byCat),
 
       casse: {

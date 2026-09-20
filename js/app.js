@@ -810,11 +810,21 @@
     var r = new FileReader();
     r.onload = function () {
       try {
-        var n = BT.store.importJSON(r.result);
+        var e = BT.store.importJSON(r.result);
         player = null;
         BT.sfx.setOn(BT.store.settings().sound !== false);
+        /* Va detto che nessuno e' stato cancellato: chi carica un backup
+           su un gioco dove gia' giocava qualcuno se lo chiede, e se non
+           glielo dici lo scopre solo aprendo i profili col batticuore. */
+        var msg = 'Backup caricato: ' + e.arrivati + ' ' +
+          BT.plural(e.arrivati, 'giocatore', 'giocatori') + ' dal file.';
+        if (e.cerano) {
+          msg += ' Nessuno di quelli che c\'erano gi&agrave; &egrave; stato cancellato: ' +
+            'i profili con lo stesso nome sono stati <b>messi insieme</b>, e adesso in tutto siete ' +
+            e.totali + '.';
+        }
         document.getElementById('set-msg').innerHTML =
-          'Backup caricato: ' + n + ' ' + BT.plural(n, 'giocatore', 'giocatori') + '. Torna alla schermata iniziale per scegliere chi gioca.';
+          msg + ' Torna alla schermata iniziale per scegliere chi gioca.';
         BT.toast('Backup caricato ✅');
       } catch (e) {
         document.getElementById('set-msg').textContent = 'File non valido: ' + e.message;

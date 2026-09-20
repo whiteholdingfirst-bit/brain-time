@@ -414,9 +414,22 @@ appoggiarsi alla pagina di famiglia. Ma va detto a chi gioca, se no sembra che i
 sparito. Il ponte, finche' non c'e' un vero backend, e' il **backup JSON**: *Impostazioni →
 Scarica backup* da una parte, *Impostazioni → carica backup* dall'altra.
 
-> ⚠️ `store.importJSON` fa `state = d`: **sostituisce** l'elenco dei giocatori, non lo fonde.
-> Va bene verso una copia vuota; verso la pagina di famiglia cancellerebbe gli altri.
-> La fusione vera esiste gia' (`BT.fondi`, `js/fusione.js`) ma non e' collegata all'import.
+> **Aggiornato il 20/09:** `store.importJSON` **non sostituisce piu'** l'elenco dei giocatori.
+> Faceva `state = d`, e andava bene finche' il backup serviva a rimettere in piedi un computer
+> vuoto; ma adesso serve anche a portarsi il profilo di famiglia sul telefono, dove **c'e' gia'
+> qualcuno**. Ora passa da `BT.fondiTutti`: stesso id = stessa persona, si fondono; id diverso
+> = si aggiunge. Le preferenze del dispositivo (difficolta', suoni) restano locali, non arrivano
+> dal file. Si puo' quindi ricaricare quante volte si vuole, e anche nei due sensi.
+> Restituisce `{ totali, arrivati, cerano }`, non piu' un numero.
+
+> ⚠️ Resta il limite di `BT.fondi` **senza base comune**: prende il massimo, non la somma. Chi
+> importa il profilo di famiglia su un telefono dove aveva gia' fatto 400 punti si ritrova
+> 10.600, non 11.000. Non perde niente di quello che conta, ma quei 400 non si sommano. Per
+> sommarli davvero servirebbe conservare l'ultima versione comune dei due lati.
+
+> L'import c'e' **solo nella versione locale/pubblica**: online `storage-online.js` ha soltanto
+> `exportJSON`. Quindi oggi i backup viaggiano in un senso solo, dalla pagina di famiglia verso
+> gli altri dispositivi.
 
 > Il collegamento contiene il percorso assoluto: se la cartella si sposta di nuovo, va rifatto.
 
@@ -726,6 +739,23 @@ dispositivi, oppure una partita giocata senza rete. Funziona perche' i dati di q
 | aiuti nello zaino | il **massimo**, non la somma (se no basta aprire due schermi per raddoppiarli) |
 | nome, avatar, tema, titolo | di chi ha `aggiornatoIl` piu' recente: sono scelte, non progressi |
 | limite dei 30 minuti | il piu' severo dei due, se no si aggira cambiando dispositivo |
+| traguardi gia' presi | unione degli insiemi — **obbligatorio**, vedi sotto |
+| domande gia' viste | unione, ma **tagliata** alla lunghezza del piu' lungo dei due |
+
+> ⚠️ **I traguardi devono sopravvivere alla fusione.** `js/fusione.js` e' del 29/08 e i
+> traguardi sono del 20/09: per tre settimane `BT.fondi` non li ha copiati, e non se ne
+> accorgeva nessuno perche' la fusione non era ancora collegata a niente. Perderli non vuol
+> dire perdere un premio: vuol dire **riscuoterli di nuovo**. `normalizza()` rimette
+> `traguardi: []`, e alla prima partita `controlla()` li riassegna tutti — coppe, casse e
+> aiuti compresi — perche' i punti quelle soglie le hanno gia' passate. Trovato collaudando
+> l'import, non in produzione.
+>
+> Stessa attenzione per qualunque campo nuovo del profilo: se e' un "gia' fatto", va aggiunto
+> anche a `BT.fondi`, se no torna a farsi.
+
+> `viste` non si unisce e basta: ha un tetto voluto (due terzi della banca). Un elenco che
+> cresce a ogni fusione se la mangerebbe tutta e non resterebbe piu' niente da pescare.
+> `fondiViste` tiene la coda — le piu' recenti — lunga quanto il piu' lungo dei due.
 
 **La base comune** e' l'ultima versione che i due lati avevano in comune: serve per sommare solo
 il nuovo. Senza base la funzione prende il massimo: non perde niente, ma puo' non contare due

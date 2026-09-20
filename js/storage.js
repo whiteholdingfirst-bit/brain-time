@@ -595,14 +595,36 @@
     exportJSON: function () {
       return JSON.stringify({ app: 'brain-time', version: 1, data: state }, null, 2);
     },
+    /* =========================================================
+       Caricare un backup NON cancella chi c'e' gia'.
+
+       Prima faceva 'state = d': l'elenco arrivato prendeva il posto di
+       quello presente. Andava bene finche' il backup serviva solo a
+       rimettere in piedi un computer vuoto, ma adesso serve anche a
+       portarsi il profilo dal gioco di famiglia al telefono - e li'
+       dentro c'e' gia' qualcuno. Cancellare i suoi punti senza
+       chiederglielo non e' un backup, e' un danno.
+
+       Stesso id = stessa persona: si fondono con BT.fondi, che somma i
+       progressi e tiene il meglio. Id diverso = persona nuova, si
+       aggiunge. Cosi' il caricamento si puo' rifare quante volte si
+       vuole, e anche nei due sensi.
+
+       Le preferenze (difficolta', suoni) restano quelle del
+       dispositivo: sono di chi ha in mano lo schermo, non del backup.
+       ========================================================= */
     importJSON: function (testo) {
       var p = JSON.parse(testo);
       var d = p && p.data ? p.data : p;
       if (!d || !Array.isArray(d.players)) throw new Error('File non valido');
-      state = d;
-      if (!state.settings) state.settings = { diff: 'medio', sound: true };
+
+      var prima = state.players.length;
+      state.players = (BT.fondiTutti && prima)
+        ? BT.fondiTutti(state.players, d.players)
+        : d.players;
+      if (!state.settings) state.settings = d.settings || { diff: 'medio', sound: true };
       save();
-      return state.players.length;
+      return { totali: state.players.length, arrivati: d.players.length, cerano: prima };
     },
 
     /* --- indice bravura: precisione pesata, confrontabile fra livelli --- */
