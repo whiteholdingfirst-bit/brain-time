@@ -4,7 +4,7 @@ Questo file serve a **riprendere il lavoro da un'altra sessione**, su un altro c
 telefono. Le note tecniche stanno in `CLAUDE.md`; qui c'è solo lo stato: cosa è stato deciso,
 cosa è fatto, cosa manca e in che ordine.
 
-Ultimo aggiornamento: **19 settembre 2026**. Ultimo lavoro sul codice: **19 settembre 2026**.
+Ultimo aggiornamento: **20 settembre 2026**. Ultimo lavoro sul codice: **20 settembre 2026**.
 
 ---
 
@@ -38,23 +38,21 @@ la pagina viva e trapiantarci lo stato vero dei giocatori. Una sessione cloud no
 
 ---
 
-## Stato al 19 settembre 2026
+## Stato al 20 settembre 2026
 
 Tutto è salvo e allineato: nessuna modifica in sospeso, locale e GitHub sono allo stesso punto.
 
 - **Gioco pubblico**: online e funzionante, installabile come app (icona, schermo intero, funziona
   senza internet).
-- **Domande**: due partite di fila non danno piu' le stesse domande (era il difetto piu'
-  visibile: Diego e Gabri si ritrovavano lo stesso quiz). Ogni giocatore si porta dietro la
-  memoria di quelle gia' viste.
+- **Domande**: due partite di fila non danno piu' le stesse domande. E gli **scacchi** sono passati
+  da 12 a 39 (quinta) e 35 (seconda media): erano la materia che ripeteva davvero, perche' 12
+  domande non bastano a riempirne 9.
 - **Grafica**: rifatta. Le reazioni (`js/juice.js`) e la faccia **arcade** - notte, neon, tasti
   con lo spessore della plastica, icone disegnate, 16 temi diventati "il tuo neon".
 - **Cassa Suprema**: in cima alla scala delle rarita' si scelgono tre stelle, e una su tre
   trasforma la cassa nella Suprema, il 50% in piu'.
-- ⚠️ **Pagina di famiglia: indietro rispetto al resto.** Ha le domande randomizzate e la cassa
-  Suprema, non ancora le reazioni ne' la faccia arcade. Il controllo anti-sovrascrittura adesso
-  rifiuta la forzatura quando qualcuno ha giocato li' sopra (e il 19/09 e' successo), e l'unica
-  strada e' rileggere tutte le 8784 righe del file. Locale e pagina pubblica sono gia' aggiornati.
+- **Pagina di famiglia: allineata** (20/09, versione 48). Ha tutto: reazioni, faccia arcade e le 39
+  domande di scacchi. I dati dei giocatori verificati identici byte per byte prima di pubblicare.
 - **Supabase**: l'account non risulta ancora fatto (nel progetto non c'è nessuna chiave). È il punto
   fermo su cui è rimasto tutto il resto.
 ### 1. La grafica — ✅ **fatta il 19 settembre**
