@@ -269,6 +269,19 @@
 
 
   /* ================= menu giocatore ================= */
+  /* la riga sotto la barra: a che traguardo sei e quanto manca.
+     E' l'unico posto dove i punti cervello dicono qualcosa anche
+     fra un livello e l'altro. */
+  function rigaTraguardo() {
+    if (!BT.traguardi) return '';
+    var pr = BT.traguardi.prossimo(player);
+    var c = BT.traguardi.conto(player);
+    if (!pr) return '<div class="xp-line xp-trag"><span>' + BT.icona('podio') +
+      ' Tutti i traguardi presi</span><span>' + c.presi + '/' + c.totali + '</span></div>';
+    return '<div class="xp-line xp-trag"><span>' + BT.icona(pr.t.ico) + ' ' + pr.t.nome +
+      '</span><span>ancora ' + BT.mille(pr.manca) + ' punti</span></div>';
+  }
+
   BT.renderMenu = function () {
     if (!player) return;
     var lvl = BT.levelFromXp(player.xp);
@@ -291,13 +304,14 @@
         '<div class="pc-coins"><b>' + player.coins + '</b><span>coppe <svg class="ic"><use href="#i-coppa"/></svg></span></div>' +
       '</div>' +
       '<div class="xp-wrap">' +
-        '<div class="xp-line"><span>' + player.xp + ' punti cervello</span>' +
-        '<span>prossimo livello: ' + next + '</span></div>' +
+        '<div class="xp-line"><span>' + BT.mille(player.xp) + ' punti cervello</span>' +
+        '<span>prossimo livello: ' + BT.mille(next) + '</span></div>' +
         '<div class="xp-bar"><div class="xp-fill" style="width:' + perc + '%"></div></div>' +
         '<div class="xp-line" style="margin-top:8px">' +
           '<span>Precisione ' + acc + '%</span>' +
           '<span>Duelli vinti ' + player.duelsWon + '/' + player.duelsPlayed + '</span>' +
         '</div>' +
+        rigaTraguardo() +
       '</div>';
 
     /* etichette delle tessere che cambiano col giocatore */
@@ -334,6 +348,11 @@
 
     /* premi di una cassa aperta e mai letti (per esempio perche' la pagina
        online si e' ricaricata da sola): si riaprono finche' non li chiude lui */
+    /* i traguardi passano davanti: possono aver regalato una cassa,
+       e la cassa si apre dopo aver letto perche' l'hai avuta */
+    var trag = BT.traguardi && BT.traguardi.daLeggere(player);
+    if (trag) { BT.mostraTraguardo(player, trag); return; }
+
     var daLeggere = BT.casse.daLeggere(player);
     if (daLeggere) { mostraPremi(player, daLeggere); return; }
     var rimandata = BT.casse.rimandata(player);
@@ -538,6 +557,11 @@
     /* --- reparti degli sbloccabili --- */
     BT.SBLOCCABILI[reparto].forEach(function (art) {
       var mio = art.cost === 0 || BT.store.haSbloccato(player, reparto, art.id);
+      /* cost null = non si vende: si guadagna con un traguardo sui punti.
+         Resta in vetrina apposta, bloccato: sapere che esiste e' meta'
+         del premio. Il tasto NON ha la classe .shop-buy, cosi' non
+         prende il gestore dell'acquisto qui sotto. */
+      var daTraguardo = art.cost === null;
       var inUso = (reparto === 'titolo' && player.titolo === art.id) ||
                   (reparto === 'tema' && player.tema === art.id) ||
                   (reparto === 'avatar' && player.avatar === art.id);
@@ -554,6 +578,7 @@
           '<div class="shop-desc">' + art.desc + '</div>' +
           (inUso ? '<div class="shop-own">In uso adesso</div>' : '') + '</div>' +
         (mio ? '<button class="shop-usa">' + (inUso ? '✓ In uso' : 'Usa') + '</button>'
+             : daTraguardo ? '<button class="shop-trag" disabled>&#128274; Traguardo</button>'
              : '<button class="shop-buy">' + art.cost + ' <svg class="ic"><use href="#i-coppa"/></svg></button>');
 
       var compra = item.querySelector('.shop-buy');
@@ -675,6 +700,30 @@
         (best.c.id !== worst.c.id ? ' Da allenare: <b>' + worst.c.name + '</b>.' : '') + '</p>';
     }
     html += '</div>';
+
+    /* --- i traguardi sui punti cervello ---
+       Si vedono tutti, anche quelli lontani: e' l'elenco che dice
+       che cosa c'e' ancora da prendere. Chi e' arrivato al 25.000
+       non deve scoprire per caso che esiste il 100.000. */
+    if (BT.traguardi) {
+      var ct = BT.traguardi.conto(player);
+      html += '<div class="card"><h2 class="card-title">' + BT.icona('podio') +
+        ' Traguardi &middot; ' + ct.presi + ' su ' + ct.totali + '</h2>';
+      BT.TRAGUARDI.forEach(function (t) {
+        var preso = player.traguardi.indexOf(t.id) >= 0;
+        var premio = BT.traguardi.premioInParole(t);
+        html += '<div class="trag-riga' + (preso ? ' preso' : '') + '">' +
+          '<div class="trag-ico">' + BT.icona(preso ? t.ico : 'bersaglio') + '</div>' +
+          '<div><div class="trag-nome">' + t.nome +
+            '<span class="trag-xp">' + BT.mille(t.xp) + ' punti</span></div>' +
+            '<div class="trag-premio">' + (premio || t.testo) + '</div>' +
+          '</div>' +
+          '<div class="trag-stato">' + (preso ? '&#10004;'
+            : 'ancora ' + BT.mille(Math.max(0, t.xp - player.xp))) + '</div>' +
+          '</div>';
+      });
+      html += '</div>';
+    }
 
     document.getElementById('stats-body').innerHTML = html;
   }
@@ -1274,6 +1323,50 @@
     if (altra) altra.onclick = function () { BT.casse.letta(p); BT.mostraCassa(p); };
   }
 
+
+  /* ================= traguardi sui punti cervello =================
+     Stessa regola della cassa, e per lo stesso motivo: online ogni
+     salvataggio ripubblica la pagina e il DOM sparisce. Quindi
+     l'annuncio vive nel profilo e resta finche' non lo chiude lui.
+
+     Arriva una lista, non un traguardo solo: chi gioca da prima che i
+     traguardi esistessero ne sblocca diversi in un colpo. */
+  BT.mostraTraguardo = function (p, lista) {
+    var html = '<div class="cassa-box" data-rar="traguardo">' +
+      '<div class="cassa-ico">' + BT.icona('podio') + '</div>' +
+      '<div class="cassa-titolo">' + (lista.length > 1
+        ? 'Hai superato ' + lista.length + ' traguardi in un colpo'
+        : 'Traguardo raggiunto') + '</div>' +
+      '<div class="cassa-molt"><span class="rar-tag rar-traguardo">' +
+        BT.mille(p.xp) + ' punti cervello</span></div>' +
+      '</div>';
+
+    lista.forEach(function (t) {
+      var premio = BT.traguardi.premioInParole(t);
+      html += '<div class="premio traguardo">' +
+        '<div class="premio-ico">' + BT.icona(t.ico) + '</div>' +
+        '<div>' +
+          '<div class="premio-eti">' + BT.mille(t.xp) + ' punti</div>' +
+          '<div class="premio-nome">' + t.nome + '</div>' +
+          '<div class="premio-testo">' + t.testo + '</div>' +
+          (premio ? '<div class="premio-vinto">Hai preso: ' + premio + '</div>' : '') +
+        '</div></div>';
+    });
+
+    html += '<div class="cassa-leggi">I traguardi si prendono una volta sola, ' +
+        'e poi restano tuoi per sempre.</div>' +
+      '<button class="btn btn-gold btn-block" id="trag-ok">&#10004; Ho letto, va bene</button>';
+
+    var box = document.getElementById('cassa-body');
+    box.innerHTML = html;
+    BT.show('screen-cassa');
+    BT.refreshTopbar();
+
+    box.querySelector('#trag-ok').onclick = function () {
+      BT.traguardi.letto(p);
+      BT.show('screen-menu'); BT.renderMenu();
+    };
+  };
   /* ================= scoperte ================= */
   function renderScoperte() {
     BT.store.normalizza(player);

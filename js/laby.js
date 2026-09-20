@@ -371,6 +371,7 @@
        labirinto non basta, deve farti salire di livello. Vale in tutte le
        modalita' (qui e in game.js), cosi' la regola e' una sola. */
     if (salita.levelUp) BT.store.aggiungiCassa(L.player);
+    if (BT.traguardi) BT.traguardi.controlla(L.player);
 
     BT.laby.mostraEsito({
       vinto: true, stelle: stelle, secondi: impiegati, mosse: L.mosse,

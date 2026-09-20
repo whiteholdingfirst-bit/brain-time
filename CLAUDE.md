@@ -1074,3 +1074,64 @@ scritte dei negozi e su una domanda di tre righe stanca. Provato, visto, e
 infatti `.q-text` usa il corpo in grassetto.
 Le due famiglie arrivano da Google Fonts con il ripiego di sistema, come prima
 faceva Fredoka: senza rete il gioco resta leggibile.
+
+---
+
+# Traguardi sui punti cervello (`js/traguardi.js`, 20/09/2026)
+
+Richiesta: *"metti anche dei premi con gli xp"*. I punti cervello facevano salire di livello, e il
+livello portava una cassa; ma fra un livello e l'altro passano migliaia di punti e in mezzo non
+succedeva niente. `BT.TRAGUARDI` sono **dieci soglie fisse** (1.000, 2.500, 5.000, 10.000, 16.000,
+25.000, 40.000, 60.000, 80.000, 100.000), ognuna con un premio, prese una volta sola e per sempre.
+
+> ⚠️ **I punti cervello non si spendono, e non devono diventare una moneta.** Sono il metro della
+> classifica: se si potessero spendere, la classifica diventerebbe "chi ha speso di meno". Le coppe
+> sono la moneta; i punti sono la storia di quanto hai giocato, e quella non si consuma.
+
+Le soglie sono **spostate apposta** rispetto ai livelli (600, 1800, 3600, 6000, 9000...): se
+cadessero insieme, cassa e traguardo arriverebbero nello stesso istante e si darebbero fastidio.
+
+## I premi che contano non sono le coppe
+Con 21.000 coppe in tasca un premio in coppe non emoziona nessuno. Quelli veri sono **tre titoli**
+(`tenace`, `maratoneta`, `centomila`) e **due avatar** (🗿, 🌠) che **non si comprano al Negozio**:
+stanno in `BT.SBLOCCABILI` con `cost: null` e un campo `traguardo`.
+
+Due paletti attorno a `cost: null`, tutti e due necessari:
+- nel Negozio il tasto ha classe **`.shop-trag`**, non `.shop-buy`, cosi' non prende il gestore
+  dell'acquisto; resta in vetrina bloccato, perche' sapere che esiste e' meta' del premio;
+- in `store.sblocca` c'e' `if (art.cost === null) return false;` **in tutti e due gli store**.
+  Senza quella riga `p.coins < null` e' falso, `p.coins -= null` non toglie niente e l'articolo
+  si sbloccherebbe **gratis**.
+
+`traguardi.js` fa `push` su `BT.SBLOCCABILI` al caricamento, quindi va **dopo `storage.js`**
+(nell'ordine sta dopo `casse.js`). Il blocco che toglie dalle famiglie gli avatar comprabili gira
+dentro `storage.js`, cioe' **prima**: i due avatar dei traguardi non sono nelle famiglie e non
+devono esserci.
+
+## Dove scatta
+`BT.traguardi.controlla(p)` dopo ogni partita che da' punti, nei tre punti dove l'xp cambia:
+`game.js finish()` (solo se `tipo !== 'allena'`), `laby.js vinto()`, `lingue.js fine()`.
+Assegna **tutti** i traguardi maturati, non solo il primo — chi gioca da prima che esistessero ne
+sblocca diversi in un colpo, ed e' giusto: quei punti li ha fatti. Diego, a 10.600 punti, ne ha
+presi quattro insieme alla prima partita.
+
+Salva **una volta sola** alla fine: online ogni salvataggio ripubblica la pagina, e dieci premi non
+devono voler dire dieci ricaricamenti. Verificato: quattro traguardi = **una** `publish`.
+
+## L'annuncio vive nel profilo
+Stessa regola della cassa e per lo stesso motivo: `p.traguardoDaLeggere` (lista di id), `renderMenu`
+la ripropone, `BT.traguardi.letto(p)` la cancella solo col tasto "Ho letto, va bene". Il controllo
+sta **prima** di quello della cassa, perche' un traguardo puo' regalare una cassa e ha senso
+leggere prima perche' l'hai avuta. La schermata riusa `screen-cassa` (e' un contenitore vuoto:
+nessun markup nuovo da tenere allineato fra `index.html` e `index-online.html`).
+
+I colori non sono una rarita' di cassa: prendono il **neon del tema** (`--rar:var(--neon)`), cosi'
+si vede subito che sono un'altra cosa.
+
+## Dove si vedono
+- **riga sotto la barra dei punti** nel menu: a che traguardo sei e quanto manca (`rigaTraguardo()`);
+- **elenco completo nelle Statistiche**, presi e da prendere: chi e' al 25.000 non deve scoprire
+  per caso che esiste il 100.000.
+
+`BT.mille(n)` mette i punti alle migliaia (100000 → 100.000). E' scritta a mano, senza regex: un
+numero lungo senza separatori, a un bambino, non si legge.

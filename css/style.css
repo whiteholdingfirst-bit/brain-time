@@ -473,6 +473,13 @@ body::after{
   background:var(--oro); color:#4a3200; font-weight:700; font-size:18px; box-shadow:0 3px 0 var(--oro-scuro); flex:none;
 }
 .shop-buy[disabled]{opacity:.45; cursor:not-allowed}
+/* l'articolo che non si vende: si vede, si legge, non si compra */
+.shop-trag{
+  font-family:inherit; border:0; border-radius:13px; padding:11px 13px;
+  background:var(--azzurro-100); color:var(--azzurro-800);
+  font-weight:700; font-size:14.5px; cursor:not-allowed; flex:none;
+  max-width:8.5em; line-height:1.25;
+}
 
 /* ---------- classifica ---------- */
 .rank-list{display:flex; flex-direction:column; gap:10px; margin-bottom:12px}
@@ -991,6 +998,40 @@ body[data-tema="vulcano"], body[data-tema="deserto"]{
 }
 .cassa-box[data-rar="supremo"]{--rar:var(--rar-supremo)}
 .stella-box[data-rar="supremo"]{--rar:var(--rar-supremo)}
+
+/* ---------- traguardi sui punti cervello ----------
+   Non sono una rarita' di cassa: prendono il neon del tema, cosi'
+   si vede subito che sono un'altra cosa. */
+.cassa-box[data-rar="traguardo"]{--rar:var(--neon)}
+.rar-traguardo{--rar:var(--neon); color:var(--carta)}
+.premio.traguardo{border-color:var(--neon); background:var(--azzurro-50)}
+.premio.traguardo .premio-nome{color:var(--azzurro-800)}
+.premio-vinto{
+  margin-top:7px; font-size:14.5px; line-height:1.5;
+  padding-top:6px; border-top:1px dashed var(--azzurro-300);
+}
+/* la riga sotto la barra dei punti: piccola, non deve rubare la scena */
+.xp-trag{margin-top:6px; font-size:14px; opacity:.85; align-items:center}
+.xp-trag .ic{vertical-align:-.12em}
+
+/* ---------- elenco dei traguardi nelle statistiche ---------- */
+.trag-riga{
+  display:flex; align-items:center; gap:11px; padding:9px 0;
+  border-bottom:1px solid var(--azzurro-100); opacity:.6;
+}
+.trag-riga:last-child{border-bottom:0}
+.trag-riga.preso{opacity:1}
+.trag-ico{font-size:24px; line-height:1; flex:none; color:var(--azzurro-700)}
+.trag-riga.preso .trag-ico{color:var(--oro)}
+.trag-nome{font-weight:700; font-size:16px; color:var(--inchiostro)}
+.trag-xp{
+  display:inline-block; margin-left:8px; font-weight:700; font-size:12.5px;
+  padding:1px 8px; border-radius:999px;
+  background:var(--azzurro-100); color:var(--azzurro-800);
+}
+.trag-premio{font-size:14px; line-height:1.45; color:var(--inchiostro-soft); margin-top:2px}
+.trag-stato{margin-left:auto; flex:none; font-size:13.5px; font-weight:700; color:var(--inchiostro-soft); text-align:right}
+.trag-riga.preso .trag-stato{color:var(--verde); font-size:19px}
 
 /* tre stelle in riga: su telefono devono starci tutte senza scorrere,
    quindi sono piu' piccole di quella singola e la riga va a capo solo

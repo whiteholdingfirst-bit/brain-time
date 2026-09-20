@@ -466,6 +466,7 @@
       if (!p.labirinto.tempi) p.labirinto.tempi = {};
       if (!p.tempo) p.tempo = { usato: 0, ultimo: 0, bloccatoFino: 0 };
       if (!Array.isArray(p.viste)) p.viste = [];   /* domande gia' viste */
+      if (!Array.isArray(p.traguardi)) p.traguardi = [];  /* soglie di punti gia' prese */
 
       return p;
     },
@@ -567,6 +568,10 @@
       var art = null;
       lista.forEach(function (x) { if (x.id === id) art = x; });
       if (!art || BT.store.haSbloccato(p, tipo, id)) return false;
+      /* cost null: si prende con un traguardo sui punti, non con le coppe.
+         Senza questa riga 'p.coins < null' sarebbe falso e l'articolo
+         si sbloccherebbe gratis. */
+      if (art.cost === null) return false;
       if (p.coins < art.cost) return false;
       p.coins -= art.cost;
       p.sbloccati[tipo].push(id);

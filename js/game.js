@@ -365,6 +365,8 @@
           : BT.store.recordRun(p, run);
         /* ogni livello nuovo porta una cassa sorpresa */
         if (salita.levelUp) BT.store.aggiungiCassa(p);
+        /* e i punti totali possono aver superato una soglia */
+        if (BT.traguardi && tipo !== 'allena') BT.traguardi.controlla(p);
 
         out.push({ p: p, run: run, levelUp: salita });
       });

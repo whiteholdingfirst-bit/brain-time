@@ -40,7 +40,8 @@ la pagina viva e trapiantarci lo stato vero dei giocatori. Una sessione cloud no
 
 ## Stato al 20 settembre 2026
 
-Tutto è salvo e allineato: nessuna modifica in sospeso, locale e GitHub sono allo stesso punto.
+Locale e GitHub sono allo stesso punto. In sospeso c'è solo il deploy della pagina di famiglia,
+che è indietro di una modifica (i traguardi): vedi sotto.
 
 - **Gioco pubblico**: online e funzionante, installabile come app (icona, schermo intero, funziona
   senza internet).
@@ -51,8 +52,13 @@ Tutto è salvo e allineato: nessuna modifica in sospeso, locale e GitHub sono al
   con lo spessore della plastica, icone disegnate, 16 temi diventati "il tuo neon".
 - **Cassa Suprema**: in cima alla scala delle rarita' si scelgono tre stelle, e una su tre
   trasforma la cassa nella Suprema, il 50% in piu'.
-- **Pagina di famiglia: allineata** (20/09, versione 48). Ha tutto: reazioni, faccia arcade e le 39
-  domande di scacchi. I dati dei giocatori verificati identici byte per byte prima di pubblicare.
+- **Traguardi sui punti cervello** (20/09): dieci soglie da 1.000 a 100.000 punti, ognuna con un
+  premio. I tre titoli e i due avatar dei traguardi **non si comprano**: si vedono in Negozio
+  bloccati. Si vede a che punto sei nel menu e l'elenco completo nelle Statistiche.
+- **Pagina di famiglia: indietro di una modifica.** Alla versione 48 (20/09) ha reazioni, faccia
+  arcade e le 39 domande di scacchi, ma **non ha i traguardi**. Non e' un problema: la rilettura
+  integrale costa piu' di quanto valga farla adesso, e la regola e' raggruppare. Va fatta al
+  prossimo deploy, e allora Diego trovera' i suoi quattro traguardi arretrati gia' pronti.
 - **Supabase**: l'account non risulta ancora fatto (nel progetto non c'è nessuna chiave). È il punto
   fermo su cui è rimasto tutto il resto.
 ### 1. La grafica — ✅ **fatta il 19 settembre**

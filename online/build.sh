@@ -12,7 +12,7 @@ OUT="online/brain-time-online.html"
 
 JS="js/util.js js/sfx.js js/juice.js js/foto.js online/sync.js js/storage.js online/storage-online.js \
 js/data-math.js js/data-logic.js js/data-lang.js js/data-history.js js/data-culture.js \
-js/data-chess.js js/data-curiosita.js js/bank.js js/game.js js/musica.js js/casse.js js/laby.js js/data-lingue.js js/lingue.js js/fusione.js js/limite.js \
+js/data-chess.js js/data-curiosita.js js/bank.js js/game.js js/musica.js js/casse.js js/traguardi.js js/laby.js js/data-lingue.js js/lingue.js js/fusione.js js/limite.js \
 online/app-online.js"
 
 # 1) markup con il CSS al posto del segnaposto

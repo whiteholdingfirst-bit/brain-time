@@ -233,6 +233,7 @@
       salita = BT.store.premia(S.player, S.punti, S.coppe);
       /* stessa regola di tutto il resto: la cassa arriva col livello cervello */
       if (salita.levelUp) BT.store.aggiungiCassa(S.player);
+      if (BT.traguardi) BT.traguardi.controlla(S.player);
     }
     BT.sfx.play(S.giuste === S.lista.length ? 'vittoria' : 'coppa');
     BT.lingue.mostraEsito({
