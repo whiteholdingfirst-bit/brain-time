@@ -21,3 +21,6 @@ desktop.ini
 pagina-online.txt
 # indirizzo della pagina online, per questo computer: non va in un repo pubblico
 js/config-locale.js
+
+# la pagina di famiglia e tutto cio che la riguarda: il repo e pubblico
+privato/
