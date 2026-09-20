@@ -93,21 +93,27 @@ al ritorno del collegamento i progressi si fondono.
 ### 3. Classifica e community
 Dopo Supabase. Classifica fra amici invitati, **senza messaggi**.
 
-### 4. Una banca di domande per i piccoli
+### 4. Banche di domande da ingrossare
+Gli **scacchi** sono stati portati da 12 a 39 (quinta) e 35 (seconda media) il 20/09: erano la
+materia che ripeteva, ed e' la materia che Diego gioca. Restano magre **Logica** (23-25) e
+**Storia** (25): con 15 domande pescate in Difficile si ripete ancora. Regola: la banca deve
+stare almeno al doppio delle domande pescate.
+
+### 5. Una banca di domande per i piccoli
 Sotto gli otto anni le domande restano quelle della quinta elementare, quindi troppo difficili
 (il limite è dichiarato anche nell'interfaccia). Serve una quarta banca — colori, forme, contare,
 versi degli animali — in tutte le categorie. È lavoro di contenuti, non di codice, e si può fare
 **senza aspettare Supabase**.
 
-### 5. La traduzione dell'interfaccia
+### 6. La traduzione dell'interfaccia
 Menu, pulsanti e messaggi in inglese, francese, tedesco e spagnolo: circa 400 frasi da estrarre e
 ricablare. Le domande del quiz resterebbero in italiano, perché sono programma scolastico italiano.
 La voce nelle Impostazioni arriverà **insieme** alla traduzione, non prima.
 
-### 6. Riaccendere il limite dei 30 minuti
+### 7. Riaccendere il limite dei 30 minuti
 `ATTIVO = true` in `js/limite.js`, quando il gioco è considerato finito. Adesso è spento.
 
-### 7. App Store e Google Play — **messo in attesa di proposito**
+### 8. App Store e Google Play — **messo in attesa di proposito**
 Deciso il 30/08: si aspetta. Costano 99 $/anno (Apple) e 25 $ (Google), hanno revisioni
 aggiuntive perché è un gioco per bambini, e ogni aggiornamento ripassa dalla revisione. L'app
 installabile che c'è già copre il 90% della differenza.

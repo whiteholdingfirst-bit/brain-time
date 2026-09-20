@@ -874,10 +874,16 @@ Due paletti da non togliere:
 Vale anche per l'**allenamento**: se allenandosi le domande non si "consumassero", subito dopo
 si ritroverebbero identiche nella partita vera.
 
-> Limite dichiarato: una materia singola con banca piccola deve per forza ripetere. Scacchi in
-> quinta ha 12 domande e una partita in Medio ne pesca 9. Adesso almeno ripesca le piu' vecchie,
-> e **dentro la stessa partita** non ci sono mai doppioni. Per risolverlo davvero serve scrivere
-> altre domande, non altro codice.
+> Limite dichiarato allora: una materia singola con banca piccola deve per forza ripetere.
+> **Risolto il 20/09 per gli scacchi**, che erano il caso peggiore: 12 domande fisse per livello,
+> contro 9 pescate in Medio e 15 in Difficile (dove si pesca dalla fascia sopra, quindi tre
+> ripetute nella stessa partita erano obbligate). Adesso: **39 in quinta, 35 in seconda media**.
+> Misurato dopo: zero ripetizioni su 5 partite di fila in Facile, 4 in Medio, 3 in Difficile.
+>
+> La regola che ne esce: `BT.bank.size(cat, liv)` deve stare **almeno al doppio** delle domande
+> pescate, meglio il triplo. Sotto, nessuna randomizzazione puo' salvarti: non si possono pescare
+> 15 domande diverse da una banca di 12. Le altre materie oggi stanno a 23-60, tranne la
+> matematica che ne ha 12 ma sono *generatori* (numeri nuovi ogni volta, quindi infinite).
 
 ## La cassa Suprema e le tre stelle (idea di Diego)
 
