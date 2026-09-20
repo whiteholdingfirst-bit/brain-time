@@ -8,6 +8,27 @@
 <meta name="theme-color" content="#0b0d1f">
 <link rel="icon" href="icona.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icone/icona-180.png">
+<!-- Serve perche' Chrome e Edge offrano l'installazione da QUESTA pagina:
+     senza, l'evento beforeinstallprompt non arriva mai e il tasto non
+     compare. Il manifest dice start_url "./", quindi l'app installata
+     parte dal gioco, non da qui. -->
+<link rel="manifest" href="manifest.json">
+<script>
+/* Su iPhone "Aggiungi a Home" salva LA PAGINA CHE STAI GUARDANDO, non
+   quella che dice il manifest. Chi arriva qui e mette l'icona si ritrova
+   quindi un'app che apre le istruzioni invece del gioco - e' successo.
+
+   Questa riga ripara anche le icone gia' messe: se la pagina viene
+   aperta come app, se ne va subito sul gioco. Deve stare nel <head> e
+   prima di tutto il resto, se no si vede il lampo delle istruzioni.
+   location.replace e non href: non deve lasciare traccia nella cronologia,
+   altrimenti "indietro" riporta qui e si gira in tondo. */
+(function () {
+  var comeApp = window.navigator.standalone === true ||
+                (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  if (comeApp) location.replace('./');
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Archivo:wght@400;600;700&display=swap">
@@ -86,6 +107,14 @@ li b{color:var(--neon)}
   border-left:3px solid var(--oro); padding:2px 0 2px 14px; margin:16px 0 0;
   color:var(--testo-soft); font-size:15px;
 }
+.primo{margin:16px 0 0}
+.apri{
+  display:block; margin:18px 0 0; padding:14px 18px; text-align:center;
+  text-decoration:none; color:#08202b; background:var(--neon);
+  font-family:Bungee,Impact,sans-serif; font-size:17px; letter-spacing:.02em;
+  border-radius:14px; box-shadow:0 5px 0 var(--neon-cupo);
+}
+.apri:active{transform:translateY(3px); box-shadow:0 2px 0 var(--neon-cupo)}
 footer{margin-top:44px; text-align:center; color:var(--testo-soft); font-size:14px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
@@ -115,12 +144,16 @@ footer{margin-top:44px; text-align:center; color:var(--testo-soft); font-size:14
 
 <h2>iPhone e iPad</h2>
 <div class="scheda">
+  <p class="primo">Su iPhone l&rsquo;icona salva <b>la pagina che stai guardando</b>.
+    Quindi il primo passo non &egrave; toccare Condividi: &egrave; aprire il gioco.</p>
   <ol>
-    <li>Apri questa pagina con <b>Safari</b> (non con un altro browser: su iPhone solo Safari sa farlo).</li>
-    <li>Tocca il tasto <b>Condividi</b> in basso &mdash; il quadrato con la freccia che esce.</li>
-    <li>Scorri l&rsquo;elenco e tocca <b>Aggiungi a Home</b>.</li>
-    <li>Tocca <b>Aggiungi</b> in alto a destra.</li>
+    <li>Assicurati di essere su <b>Safari</b> (su iPhone gli altri browser non sanno farlo).</li>
+    <li><b>Apri il gioco</b> col tasto qui sotto. Aspetta che compaia la schermata
+      &ldquo;Chi gioca?&rdquo;.</li>
+    <li>Tocca <b>Condividi</b> in basso &mdash; il quadrato con la freccia che esce.</li>
+    <li>Scorri l&rsquo;elenco e tocca <b>Aggiungi a Home</b>, poi <b>Aggiungi</b> in alto a destra.</li>
   </ol>
+  <a class="apri" href="./">&#9654;&nbsp; Apri il gioco, poi Condividi</a>
   <p class="avviso">L&rsquo;icona compare fra le altre app. Da l&igrave; si apre a schermo intero,
     senza la barra dell&rsquo;indirizzo, e funziona anche senza internet.</p>
 </div>
@@ -194,10 +227,8 @@ footer{margin-top:44px; text-align:center; color:var(--testo-soft); font-size:14
     esito.textContent = 'Installato. Cerca l’icona fra le tue app.';
   });
 
-  /* gia' aperto come app: non ha senso proporre di installarlo */
-  if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-    esito.textContent = 'Lo stai già usando come app.';
-  }
+  /* Il caso "aperto come app" non passa mai di qui: lo intercetta lo
+     script nel <head>, che se ne va dritto sul gioco. */
 })();
 </script>
 </body>
