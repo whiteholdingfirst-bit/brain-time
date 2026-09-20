@@ -392,11 +392,31 @@ PNG. Serve tutto: `System.Drawing` (e alcune viste vecchie di Explorer) non sann
 che contenga **solo** il PNG, e l'icona resterebbe vuota. Se un giorno si rigenera, ricordarsi
 delle voci DIB.
 
-Il collegamento sul desktop (`%USERPROFILE%\Desktop\Brain Time.lnk`) punta direttamente a
-`index.html`: si apre col browser predefinito, quindi continua a funzionare anche se un domani
-Chrome o Edge non ci sono piu'. In alternativa si puo' farlo puntare al browser in modalita' app
-(`chrome.exe --app="file:///.../index.html"`): finestra pulita senza barra degli indirizzi, ma
-legato a quel browser.
+Il collegamento era nato per puntare direttamente a `index.html`, cosi' da aprirsi col browser
+predefinito e continuare a funzionare anche se un domani Chrome o Edge non ci fossero piu'.
+
+> ⚠️ **Non e' piu' cosi' (verificato il 20/09/2026).** `%USERPROFILE%\Desktop\Brain Time.lnk`
+> adesso e' il collegamento dell'**app installata** (PWA) creata da Chrome:
+> `chrome_proxy.exe --profile-directory="Profile 2" --app-id=ngmondcoiggaanolggbigbioanblmgnf`,
+> cioe' **https://whiteholdingfirst-bit.github.io/brain-time/**, non il file locale.
+
+Da qui una confusione che e' gia' costata una segnalazione (*"dall'icona sul desktop non ho il mio
+profilo col punteggio attuale"*): **i posti dove si gioca sono tre, e i punti non si parlano.**
+
+| Come si apre | Dove vivono i punti |
+|---|---|
+| icona sul desktop (app installata) | localStorage dell'origine `github.io`, dentro Chrome Profile 2 |
+| doppio click su `index.html` | localStorage dell'origine `file://` |
+| pagina di famiglia (artifact claude.ai) | dentro la pagina stessa, condiviso fra i dispositivi |
+
+Non e' un difetto: la versione locale deve funzionare **senza internet**, quindi non puo'
+appoggiarsi alla pagina di famiglia. Ma va detto a chi gioca, se no sembra che il profilo sia
+sparito. Il ponte, finche' non c'e' un vero backend, e' il **backup JSON**: *Impostazioni →
+Scarica backup* da una parte, *Impostazioni → carica backup* dall'altra.
+
+> ⚠️ `store.importJSON` fa `state = d`: **sostituisce** l'elenco dei giocatori, non lo fonde.
+> Va bene verso una copia vuota; verso la pagina di famiglia cancellerebbe gli altri.
+> La fusione vera esiste gia' (`BT.fondi`, `js/fusione.js`) ma non e' collegata all'import.
 
 > Il collegamento contiene il percorso assoluto: se la cartella si sposta di nuovo, va rifatto.
 
