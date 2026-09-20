@@ -1411,6 +1411,11 @@
     BT.store.load();
     BT.sfx.setOn(BT.store.settings().sound !== false);
 
+    /* Il gioco e' gia' sulla Home come app: nascondiamo l'invito a
+       installarlo. La CSS lo fa da sola dove il browser dichiara
+       display-mode, ma iPhone risponde solo a navigator.standalone. */
+    if (window.navigator.standalone === true) document.body.classList.add('come-app');
+
     document.getElementById('btn-back').onclick = goBack;
 
     document.getElementById('btn-new-profile').onclick = function () {

@@ -231,6 +231,14 @@ body::after{
 .btn-block{display:block; width:100%; margin-top:8px}
 .btn-big{font-size:24px; padding:16px 34px; border-radius:18px}
 .btn[disabled]{opacity:.5; cursor:not-allowed; transform:none}
+/* Il tasto "Mettilo sul telefono" e' un <a>, non un <button>: senza
+   questa riga la spaziatura di .btn non lo tocca e resta schiacciato. */
+a.btn{display:inline-block; text-align:center; text-decoration:underline}
+/* Gia' aperto come app: proporre di installarlo non ha senso, e quel
+   link riporterebbe al gioco a giro vuoto, come se il tasto fosse rotto.
+   Due strade perche' iPhone e Android non rispondono allo stesso modo. */
+@media (display-mode: standalone){ #btn-installa{display:none} }
+body.come-app #btn-installa{display:none}
 .row-btns{display:flex; gap:10px; margin-top:16px}
 .row-btns .btn{flex:1}
 
