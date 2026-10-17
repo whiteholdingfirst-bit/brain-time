@@ -753,6 +753,14 @@ body[data-skin="halloween"]{  --neon:#ff7a18; --neon-chiaro:#ffb264; --neon-cupo
   --cielo-1:#120616; --cielo-2:#1e0a24; --cielo-3:#28072c; }
 body[data-skin="inverno"]{    --neon:#7fe3ff; --neon-chiaro:#cdf3ff; --neon-cupo:#226d85; --neon-2:#c0b4ff;
   --cielo-1:#06101f; --cielo-2:#0b1d33; --cielo-3:#102740; }
+/* ⚠️ La primavera era rimasta fuori: c'era nel calendario e nel Negozio
+   ma non aveva questa riga, quindi da marzo a maggio il gioco metteva
+   data-skin="primavera" e non cambiava NIENTE - e chi l'avesse comprata
+   avrebbe pagato 60 coppe per il nulla. Trovata generando il foglio con
+   tutte le palette a partire da questo file invece che a memoria: e' il
+   tipo di buco che nessun collaudo trova, perche' non da' errori. */
+body[data-skin="primavera"]{  --neon:#ff8fd0; --neon-chiaro:#ffc7e6; --neon-cupo:#9e2f74; --neon-2:#8ee86b;
+  --cielo-1:#0c1410; --cielo-2:#132018; --cielo-3:#1a2420; }
 body[data-skin="natale"]{     --neon:#ff5a66; --neon-chiaro:#ffa8b0; --neon-cupo:#8d1623; --neon-2:#56db85;
   --cielo-1:#07130c; --cielo-2:#0d2214; --cielo-3:#13291a; }
 body[data-skin="carnevale"]{  --neon:#ff4fd8; --neon-chiaro:#ffa8ec; --neon-cupo:#8c1773; --neon-2:#ffd24d;

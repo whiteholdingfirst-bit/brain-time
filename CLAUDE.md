@@ -1406,3 +1406,19 @@ Il pannello di anteprima **rifiuta i file sopra ~512 KB** (il bundle completo e'
 non dice perche': sembra che il file non esista. Per provare l'interfaccia conviene un bundle
 ridotto che salta le banche di domande — ma **non** `data-curiosita.js`, che `renderMenu` usa per
 contare le Scoperte, se no si rompe con un errore che sembra un difetto del gioco e non del test.
+
+### La primavera mancava, e nessun collaudo l'avrebbe trovata (17/10/2026)
+
+Generando un foglio con **tutte** le palette a partire da `css/style.css` e' saltato fuori che
+`body[data-skin="primavera"]` **non esisteva**: la primavera era nel calendario e nel Negozio, ma
+senza riga nel foglio. Conseguenza: dal 1 marzo al 31 maggio il gioco avrebbe messo
+`data-skin="primavera"` e **non sarebbe cambiato niente**, e chi l'avesse comprata avrebbe pagato
+60 coppe per il nulla.
+
+Non dava nessun errore, e il controllo del contrasto non la vedeva perche' lavorava su un elenco
+di id scritto a mano — lo stesso elenco incompleto. **Due liste scritte a mano che si confermano
+a vicenda non sono una verifica.**
+
+> Regola che ne esce: quando una cosa esiste in due posti (una lista in JS e una regola nel CSS),
+> il controllo va fatto **incrociando i due posti**, non ricopiando uno dei due. Qui e' bastato
+> leggere gli `body[data-skin=...]` dal foglio e confrontarli con `BT.SBLOCCABILI.veste`.
