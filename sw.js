@@ -17,12 +17,13 @@
    una richiesta in piu' all'avvio non si sente, mentre restare
    indietro di una versione si sente eccome.
    ========================================================= */
-var VERSIONE = 'brain-time-2026-10-17a';
+var VERSIONE = 'brain-time-2026-10-17b';
 
 var FILE = [
   './',
   './index.html',
   './installa.html',
+  './privacy.html',
   './condividi/qr-brain-time-logo.png',
   './manifest.json',
   './css/style.css',

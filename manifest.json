@@ -1,16 +1,21 @@
 {
+  "id": "/brain-time/",
   "name": "Brain Time",
   "short_name": "Brain Time",
-  "description": "Non fa i compiti al posto tuo: ti rende piu' forte. Quiz, labirinti e lingue.",
+  "description": "Non fa i compiti al posto tuo: ti rende piu' forte. Quiz di sei materie, labirinti e lingue, per ragazzi dalle elementari in su.",
   "lang": "it",
+  "dir": "ltr",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#0b0d1f",
   "theme_color": "#0b0d1f",
+  "categories": ["education", "games", "kids"],
+  "prefer_related_applications": false,
   "icons": [
-    { "src": "icone/icona-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icone/icona-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icona.svg", "sizes": "any", "type": "image/svg+xml" }
+    { "src": "icone/icona-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icone/icona-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icona.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ]
 }
