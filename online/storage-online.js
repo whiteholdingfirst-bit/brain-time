@@ -64,12 +64,16 @@
       return null;
     },
 
-    create: function (name, avatar, anni) {
+    create: function (name, avatar, anni, nato) {
       var eta = parseInt(anni, 10) || 10;
       var p = {
         id: 'p' + (S.players.length + 1) + '-' + name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 8),
         name: name, avatar: avatar,
         eta: eta,
+        /* Compleanno: giorno e mese, MAI l'anno. Per fare gli auguri il
+           giorno basta, e un anno di nascita sarebbe un dato personale
+           in piu' che non serve a niente. Si puo' non dirlo. */
+        nato: nato || null,
         level: BT.livelloDaEta(eta),
         xp: 0, coins: 30, answered: 0, correct: 0,
         bestRun: 0, bestStreak: 0, duelsWon: 0, duelsPlayed: 0,
@@ -98,6 +102,7 @@
       if (!p || !dati) return p;
       if (dati.name) p.name = dati.name;
       if (dati.avatar) p.avatar = dati.avatar;
+      if (dati.nato !== undefined) p.nato = dati.nato || null;
       if (dati.eta) {
         p.eta = parseInt(dati.eta, 10) || p.eta;
         p.level = BT.livelloDaEta(p.eta);

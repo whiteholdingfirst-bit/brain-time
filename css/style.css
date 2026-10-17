@@ -733,6 +733,67 @@ body[data-tema="vulcano"], body[data-tema="deserto"]{
 }
 
 /* =========================================================
+   LE VESTI DEL CALENDARIO (js/stagioni.js)
+
+   Stesso identico contratto dei temi del Negozio: una veste
+   ridefinisce SOLO il neon (quattro colori) e la tinta del fondo.
+   Non tocca --carta, --inchiostro, --ok-bg, --no-bg, --oro-*.
+
+   E' quello che garantisce che nessuna veste possa nascere
+   illeggibile: il contrasto lo decide il fondo, e il fondo resta
+   sempre notte. Se un domani si aggiunge una festa, si copia una
+   di queste righe e si cambiano i colori - niente altro.
+
+   La veste vince sul tema comprato al Negozio (e' un evento, dura
+   pochi giorni), ma si puo' spegnere dalle Impostazioni.
+   ========================================================= */
+body[data-skin="autunno"]{    --neon:#ff9a3d; --neon-chiaro:#ffc78a; --neon-cupo:#8f4408; --neon-2:#ffd84d;
+  --cielo-1:#190d05; --cielo-2:#2b1708; --cielo-3:#3a1d0a; }
+body[data-skin="halloween"]{  --neon:#ff7a18; --neon-chiaro:#ffb264; --neon-cupo:#7d3400; --neon-2:#b05cff;
+  --cielo-1:#120616; --cielo-2:#1e0a24; --cielo-3:#28072c; }
+body[data-skin="inverno"]{    --neon:#7fe3ff; --neon-chiaro:#cdf3ff; --neon-cupo:#226d85; --neon-2:#c0b4ff;
+  --cielo-1:#06101f; --cielo-2:#0b1d33; --cielo-3:#102740; }
+body[data-skin="natale"]{     --neon:#ff5a66; --neon-chiaro:#ffa8b0; --neon-cupo:#8d1623; --neon-2:#56db85;
+  --cielo-1:#07130c; --cielo-2:#0d2214; --cielo-3:#13291a; }
+body[data-skin="carnevale"]{  --neon:#ff4fd8; --neon-chiaro:#ffa8ec; --neon-cupo:#8c1773; --neon-2:#ffd24d;
+  --cielo-1:#17061e; --cielo-2:#260938; --cielo-3:#2e0a46; }
+body[data-skin="pasqua"]{     --neon:#ffd24d; --neon-chiaro:#ffeaa3; --neon-cupo:#8a6500; --neon-2:#7ef0b0;
+  --cielo-1:#0a1510; --cielo-2:#10261c; --cielo-3:#142b26; }
+body[data-skin="primomaggio"]{--neon:#ff5a52; --neon-chiaro:#ffa49e; --neon-cupo:#8d1a15; --neon-2:#ffd24d;
+  --cielo-1:#15070a; --cielo-2:#240c10; --cielo-3:#2c0f10; }
+body[data-skin="duegiugno"]{  --neon:#5ce89a; --neon-chiaro:#e4fff0; --neon-cupo:#0c6b3d; --neon-2:#ff5a52;
+  --cielo-1:#06130d; --cielo-2:#0b2016; --cielo-3:#13231a; }
+body[data-skin="finescuola"]{ --neon:#ffd93d; --neon-chiaro:#fff1a3; --neon-cupo:#8a6c00; --neon-2:#3dd9ff;
+  --cielo-1:#141004; --cielo-2:#241c06; --cielo-3:#2b2208; }
+body[data-skin="estate"]{     --neon:#2ee8d0; --neon-chiaro:#a5f7ee; --neon-cupo:#096d62; --neon-2:#ffd24d;
+  --cielo-1:#04161c; --cielo-2:#082a33; --cielo-3:#0a3340; }
+body[data-skin="compleanno"]{ --neon:#ff5fb0; --neon-chiaro:#ffb3d9; --neon-cupo:#8c1a59; --neon-2:#ffd24d;
+  --cielo-1:#1a0614; --cielo-2:#2a0a22; --cielo-3:#330c2c; }
+
+/* ---------- gli addobbi ----------
+   Emoji, come gli avatar e per le stesse ragioni: si vedono su
+   qualunque telefono, non pesano niente, non hanno padroni.
+   Sono FERME di proposito: una scheda in secondo piano non deve
+   consumare batteria per delle foglie che nessuno guarda, e un
+   telefono vecchio non deve rallentare per un addobbo. */
+.bg-skin{
+  position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+}
+.bg-skin span{
+  position:absolute; line-height:1; user-select:none;
+  filter:saturate(.8);
+}
+/* La chip dice come mai il gioco ha cambiato faccia: senza, uno
+   pensa di aver premuto qualcosa per sbaglio. */
+.skin-chip{
+  display:inline-flex; align-items:center; gap:7px;
+  padding:5px 13px; border-radius:999px; margin-top:12px;
+  background:var(--carta); border:1px solid var(--neon);
+  color:var(--neon-chiaro); font-size:13.5px; font-weight:600;
+}
+.skin-chip b{font-family:Bungee,Impact,sans-serif; font-weight:400; letter-spacing:.02em}
+
+/* =========================================================
    NEGOZIO A REPARTI
    ========================================================= */
 .shop-tabs{display:flex; gap:6px; background:rgba(255,255,255,.22); padding:5px;
@@ -1450,3 +1511,8 @@ body{ touch-action:manipulation }
 .res-ico .ic{filter:drop-shadow(0 0 16px currentColor)}
 /* dentro un tasto dorato la coppa dev'essere scura, se no sparisce */
 .btn-gold .ic, .shop-buy .ic{color:currentColor}
+
+/* le due tendine del compleanno, affiancate: su telefono stretto
+   vanno a capo da sole invece di schiacciarsi */
+.nato-riga{display:flex; gap:10px; flex-wrap:wrap}
+.nato-riga .input{flex:1; min-width:120px}

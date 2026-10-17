@@ -721,6 +721,11 @@
     var t = (p && p.tema) || 'azzurro';
     if (t === 'azzurro') delete document.body.dataset.tema;
     else document.body.dataset.tema = t;
+    /* Il vestito del calendario si rimette insieme al tema: sono due
+       attributi diversi su <body>, e nel foglio di stile la veste
+       viene dopo, quindi per qualche giorno all'anno copre il tema
+       comprato al Negozio. Passata la festa il tema torna da solo. */
+    if (BT.skin) BT.skin.applica(p);
   }
 
   function renderShop() {

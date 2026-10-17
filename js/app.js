@@ -226,12 +226,50 @@
 
     /* --- quanti anni hai --- */
     renderEta();
+    renderNato(esistente ? esistente.nato : null);
     aggiornaAnteprima();
 
     document.getElementById('np-hint').innerHTML =
       'L&rsquo;et&agrave; serve solo a scegliere la difficolt&agrave;. In classifica i giocatori restano ' +
       'confrontabili: le domande sono diverse, ma i punti valgono uguale.' +
       (esistente ? '<br>Punti, coppe e sblocchi restano come sono: cambiano solo questi dati.' : '');
+  }
+
+  /* --- il compleanno: due tendine, giorno e mese ---
+     Due <select> e non un calendario: un campo data chiede anche
+     l'anno, che qui non serve e non vogliamo. La prima voce e'
+     vuota, cosi' "non lo dico" e' la risposta predefinita e non
+     una cosa da cercare. */
+  var MESI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
+              'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+
+  function renderNato(nato) {
+    var g = document.getElementById('np-nato-g');
+    var m = document.getElementById('np-nato-m');
+    if (!g || !m) return;
+    var n = BT.stagioni ? BT.stagioni.leggiNato(nato) : null;
+
+    g.innerHTML = '<option value="">giorno</option>';
+    for (var i = 1; i <= 31; i++) {
+      g.innerHTML += '<option value="' + i + '"' +
+        (n && n.g === i ? ' selected' : '') + '>' + i + '</option>';
+    }
+    m.innerHTML = '<option value="">mese</option>';
+    MESI.forEach(function (nome, i) {
+      m.innerHTML += '<option value="' + (i + 1) + '"' +
+        (n && n.m === (i + 1) ? ' selected' : '') + '>' + nome + '</option>';
+    });
+  }
+
+  /* Risponde con 'MM-GG', oppure null se non l'ha detto o se ha
+     scelto un giorno che in quel mese non esiste (31 febbraio). */
+  function natoScelto() {
+    var g = parseInt((document.getElementById('np-nato-g') || {}).value, 10);
+    var m = parseInt((document.getElementById('np-nato-m') || {}).value, 10);
+    if (!g || !m) return null;
+    var quanti = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1];
+    if (g > quanti) return null;
+    return BT.stagioni.scriviNato(m, g);
   }
 
   /* --- quanti anni hai: i numeri, raggruppati per non fare una fila unica --- */
@@ -520,6 +558,11 @@
     var t = (p && p.tema) || 'azzurro';
     if (t === 'azzurro') delete document.body.dataset.tema;
     else document.body.dataset.tema = t;
+    /* Il vestito del calendario si rimette insieme al tema: sono due
+       attributi diversi su <body>, e nel foglio di stile la veste
+       viene dopo, quindi per qualche giorno all'anno copre il tema
+       comprato al Negozio. Passata la festa il tema torna da solo. */
+    if (BT.skin) BT.skin.applica(p);
   }
 
   function renderShop() {
@@ -750,6 +793,27 @@
       m.textContent = accesa ? 'Attiva' : 'Disattivata';
       m.className = 'btn ' + (accesa ? 'btn-primary' : 'btn-ghost');
     }
+    var k = document.getElementById('set-skin');
+    if (k) {
+      var acceso = s.skin !== false;
+      k.textContent = acceso ? 'Attivo' : 'Spento';
+      k.className = 'btn ' + (acceso ? 'btn-primary' : 'btn-ghost');
+      /* Dice che cosa indossa adesso, e se non indossa niente lo dice
+         lo stesso: un interruttore "attivo" accanto a un gioco che
+         sembra normale fa pensare che sia rotto. A settembre e'
+         proprio cosi' ed e' voluto. */
+      var d = document.getElementById('set-skin-desc');
+      var v = acceso && BT.skin ? BT.skin.adesso(player) : null;
+      if (d && acceso) {
+        d.innerHTML = v
+          ? 'Adesso il gioco &egrave; vestito da <b>' + v.ico + ' ' + v.nome + '</b> &mdash; ' +
+            v.quando + '.'
+          : 'In questo periodo non c&rsquo;&egrave; nessuna festa: il gioco resta come al solito.';
+      } else if (d) {
+        d.innerHTML = 'Spento: restano i colori del tema che hai scelto al Negozio.';
+      }
+    }
+
     var msg = document.getElementById('set-msg');
     if (msg) msg.textContent = '';
     renderDati();
@@ -1425,6 +1489,10 @@
        display-mode, ma iPhone risponde solo a navigator.standalone. */
     if (window.navigator.standalone === true) document.body.classList.add('come-app');
     if (BT.installa) BT.installa.avvio();
+    /* il vestito si vede gia' dalla schermata iniziale, prima ancora
+       di scegliere chi gioca: il compleanno arriva dopo, quando si sa
+       di chi e' il profilo */
+    if (BT.skin) BT.skin.applica(null);
 
     document.getElementById('btn-back').onclick = goBack;
 
@@ -1439,7 +1507,7 @@
       chiudiFotocamera();
       if (npModifica) {
         var vecchia = BT.etaDi(npModifica);
-        BT.store.modifica(npModifica, { name: nome, avatar: np.avatar, eta: np.eta });
+        BT.store.modifica(npModifica, { name: nome, avatar: np.avatar, eta: np.eta, nato: natoScelto() });
         BT.toast(np.eta !== vecchia
           ? 'Fatto! Adesso le domande sono di livello ' + BT.LEVELS[npModifica.level].name + '.'
           : 'Modifiche salvate.');
@@ -1447,7 +1515,7 @@
         selectPlayer(BT.store.get(player.id));
         return;
       }
-      var p = BT.store.create(nome, np.avatar, np.eta);
+      var p = BT.store.create(nome, np.avatar, np.eta, natoScelto());
       BT.toast('Benvenuto ' + nome + '! Hai 30 coppe di partenza 🏆');
       selectPlayer(p);
     };
@@ -1544,9 +1612,22 @@
     document.getElementById('set-sound').onclick = function () {
       var s = BT.store.settings();
       s.sound = !s.sound;
-      BT.store.save();
+      /* salvaPreferenze e non store.save: online un salvataggio
+         ripubblica la pagina e la ricarica sotto le mani di chi gioca,
+         e accendere un suono non e' un buon motivo per farlo. La
+         regola era gia' scritta nelle note, qui era rimasta indietro. */
+      salvaPreferenze();
       BT.sfx.setOn(s.sound);
       if (s.sound) BT.sfx.play('coppa');
+      renderSettings();
+    };
+
+    var bSkin = document.getElementById('set-skin');
+    if (bSkin) bSkin.onclick = function () {
+      var s = BT.store.settings();
+      s.skin = (s.skin === false);      /* false -> true, altrimenti false */
+      salvaPreferenze();
+      applicaTema(player);              /* si vede subito, senza ricaricare */
       renderSettings();
     };
     document.getElementById('set-cancellami').onclick = cancellaProfilo;

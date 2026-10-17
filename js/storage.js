@@ -346,13 +346,17 @@
       return null;
     },
 
-    create: function (name, avatar, anni) {
+    create: function (name, avatar, anni, nato) {
       var eta = parseInt(anni, 10) || 10;
       var p = {
         id: 'p' + Date.now() + '' + BT.rnd(100, 999),
         name: name,
         avatar: avatar,        // emoji oppure foto (data URI)
         eta: eta,              // quanti anni ha: decide la banca delle domande
+        /* Compleanno: giorno e mese, MAI l'anno. Per fare gli auguri il
+           giorno basta, e un anno di nascita sarebbe un dato personale
+           in piu' che non serve a niente. Si puo' non dirlo. */
+        nato: nato || null,
         level: BT.livelloDaEta(eta),      // elem5 | media2 | adulti
         xp: 0,                 // punti cervello totali
         coins: 30,             // coppe di partenza
@@ -385,6 +389,7 @@
       if (!p || !dati) return p;
       if (dati.name) p.name = dati.name;
       if (dati.avatar) p.avatar = dati.avatar;
+      if (dati.nato !== undefined) p.nato = dati.nato || null;
       if (dati.eta) {
         p.eta = parseInt(dati.eta, 10) || p.eta;
         p.level = BT.livelloDaEta(p.eta);

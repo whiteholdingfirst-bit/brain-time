@@ -1244,3 +1244,98 @@ o lascia uno scalino vuoto o copre l'ultimo tasto.
 ## Dove sta e dove non sta
 `index.html` e `sw.js` soltanto. **Non** in `online/build.sh`: nella pagina di famiglia il
 gioco vive dentro claude.ai e non c'e' niente da installare.
+
+---
+
+# Il gioco si veste secondo il calendario (`js/stagioni.js`, 17/10/2026)
+
+Richiesta: stagioni, feste, fine della scuola e **compleanno**. Il file e' diviso in due parti
+nettamente separate, e la divisione e' il punto: **sopra solo date**, sotto quello che tocca lo
+schermo. Le date si provano a tavolino su cent'anni di calendario — un errore li' si vede una
+volta l'anno, per un giorno, e nessuno capisce perche'.
+
+## La priorita' esiste perche' i periodi si accavallano apposta
+
+    compleanno  >  festa  >  stagione
+
+Halloween sta dentro l'autunno, Natale e Carnevale dentro l'inverno, Pasqua dentro la primavera,
+il 2 giugno e la fine della scuola dentro l'estate. Non e' da sistemare: e' il motivo per cui
+l'ordine dell'array `VESTI` **e'** la priorita' (si prende la prima che risponde di si').
+Il compleanno vince su tutto, Natale compreso: e' l'unico giorno che parla di te.
+
+## Quello che si muove va calcolato, non scritto
+
+`pasqua(anno)` e' l'algoritmo di Meeus/Jones/Butcher. Da li' derivano **due** feste:
+- **Carnevale** = da giovedi' grasso (Pasqua − 52) a martedi' grasso (Pasqua − 47);
+- **Pasqua** = dalle Palme (−7) a Pasquetta (+1), cioe' la settimana di vacanza vera.
+
+> ⚠️ **Erano state chieste come date fisse (8–11 febbraio) e sarebbero state sbagliate quasi
+> ogni anno.** Carnevale 2026 cade 12–17 febbraio, nel 2027 4–9 febbraio, nel 2028 24–29.
+> Nessuna finestra fissa li prende tutti. Verificato: la Pasqua calcolata coincide con quella
+> vera su 12 anni di controllo (2024-2033, 2000, 2038).
+
+`fineScuolaDi(anno)` e' il secondo venerdi' di giugno, calcolato dal giorno della settimana del
+1 giugno. Verificato: cade di venerdi' in tutti gli anni provati.
+
+## Due buchi nel calendario chiesto, trovati prima di disegnare
+
+- **31 maggio** restava scoperto (primavera fino al 30, estate dal 1 giugno): un giorno solo in
+  tutto l'anno. Svista evidente, **corretta**: la primavera arriva a fine mese.
+- **1–30 settembre** non ha niente, e li' il gioco resta come l'hanno disegnato. E' il risultato
+  letterale di "autunno dal 1 ottobre" ed e' **rimasto com'e' stato chiesto**: per coprirlo basta
+  cambiare `dentro(d, 10, 1, ...)` in `dentro(d, 9, 1, ...)`.
+
+Altri due dettagli che sembrano pignoleria:
+- l'inverno finisce al **29** febbraio, non al 28: il confronto e' su mese+giorno, quindi negli
+  anni normali quel giorno non arriva mai e in quelli bisestili non resta scoperto;
+- chi e' **nato il 29 febbraio** festeggia il 28 negli anni normali, se no tre anni su quattro
+  non riceverebbe gli auguri.
+
+## Le vesti sono palette, esattamente come i temi
+
+Una veste ridefinisce **solo** i quattro colori del neon e la tinta del fondo, come i 16 temi
+del Negozio. Non tocca `--carta`, `--inchiostro`, `--ok-bg`, `--oro-*`. E' quello che garantisce
+che nessuna possa nascere illeggibile.
+
+> Verificato a macchina con lo stesso metro usato per i temi: su tutte e 11, titoli e tasti
+> stanno **sopra 3:1**. Peggiore delle vesti 6,07 sul tasto e 8,09 sui titoli; peggiore dei
+> temi gia' esistenti 4,84 e 7,57 — le vesti stanno meglio dei temi.
+>
+> ⚠️ Attenzione al metro: il testo del tasto principale **non e' bianco**. `.btn-primary` viene
+> ridefinito piu' avanti nel foglio (riga ~1366) con `color:#05141f`, inchiostro scuro su neon.
+> Misurando col bianco risultano bocciate nove vesti su undici, e sono tutte false: anche i 16
+> temi "bocciano". Se un domani si rimisura, l'inchiostro giusto e' quello.
+
+## La veste copre il tema comprato, ed e' una scelta
+
+Nel foglio il blocco `body[data-skin=...]` sta **dopo** quello dei temi e ha la stessa
+specificita': vince l'ultimo scritto. Per qualche giorno all'anno chi ha comprato "galassia"
+vede Halloween; passata la festa il tema torna da solo, perche' `data-tema` resta scritto e non
+viene mai cancellato.
+
+> Questo pero' significa che **spostando quel blocco piu' in su le vesti smetterebbero di
+> vedersi senza che nessun errore lo dica.** E' il motivo per cui c'e' l'interruttore
+> **Impostazioni → Vestito del calendario**: chi ci tiene al tema che ha pagato lo rimette.
+> La preferenza passa da `salvaPreferenze()`, non da `store.save()` — vedi la trappola del
+> salvataggio che ricarica la pagina.
+
+## Il compleanno e' un dato nuovo, e andava dichiarato
+
+Il profilo aveva solo `eta` come numero: non c'era nessun compleanno da leggere. Aggiunto
+`p.nato` come stringa `'MM-GG'`, **giorno e mese, mai l'anno** — per fare gli auguri il giorno
+basta, e un anno di nascita sarebbe un dato personale in piu' che non serve a niente. E'
+facoltativo, si toglie da *modifica*, ed e' stato **aggiunto a `privacy.html`** (che e' pubblica
+e serve agli store) nello stesso commit del codice.
+
+Due tendine e non un campo data: un calendario chiederebbe anche l'anno. La prima voce e' vuota,
+cosi' "non lo dico" e' la risposta predefinita. `natoScelto()` rifiuta il 31 febbraio.
+In `BT.fondi` `nato` e' trattato come una **scelta** (nome, avatar, tema), non come un progresso.
+
+## Gli addobbi
+Emoji, come gli avatar e per le stesse ragioni: si vedono ovunque, non pesano, non hanno padroni.
+Dieci per veste, in **posizioni fisse** (non a caso: `applica()` gira a ogni cambio di giocatore
+e di tema, e degli addobbi che saltano sembrano un difetto) e **ferme**: una scheda in secondo
+piano non deve consumare batteria per delle foglie che nessuno guarda.
+
+La chip sotto il logo dice *perche'* il gioco ha cambiato faccia: senza, uno pensa di aver
+premuto qualcosa per sbaglio.

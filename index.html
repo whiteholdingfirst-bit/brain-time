@@ -138,6 +138,14 @@
       <div id="np-classi"></div>
       <div class="livello-info" id="np-livello-info"></div>
 
+      <label class="lbl" for="np-nato-g">Quando &egrave; il tuo compleanno?</label>
+      <div class="nato-riga">
+        <select class="input" id="np-nato-g" aria-label="Giorno"></select>
+        <select class="input" id="np-nato-m" aria-label="Mese"></select>
+      </div>
+      <p class="hint" id="np-nato-hint">Non &egrave; obbligatorio. Serve solo perch&eacute; quel giorno
+      il gioco si vesta a festa per te: si chiede <b>il giorno e il mese</b>, mai l&rsquo;anno.</p>
+
       <p class="hint" id="np-hint"></p>
       <div class="row-btns">
         <button class="btn btn-ghost" id="np-cancel">Annulla</button>
@@ -288,6 +296,14 @@
       <div class="set-row" style="margin-top:14px">
         <div><b>Musica dei labirinti</b><div class="shop-desc">Brani originali generati dal gioco. Se metti i tuoi file in una cartella <b>musica</b> accanto al gioco, suona quelli.</div></div>
         <button class="btn btn-ghost" id="set-musica">Attiva</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Vestito del calendario</h2>
+      <div class="set-row">
+        <div><b>Cambia faccia con le feste</b><div class="shop-desc" id="set-skin-desc">Autunno, Halloween, Natale, Carnevale, Pasqua, estate, fine della scuola&hellip; e il giorno del tuo compleanno.</div></div>
+        <button class="btn btn-ghost" id="set-skin">Attivo</button>
       </div>
     </div>
 
@@ -452,6 +468,7 @@
 <script src="js/musica.js"></script>
 <script src="js/casse.js"></script>
 <script src="js/traguardi.js"></script>
+<script src="js/stagioni.js"></script>
 <script src="js/laby.js"></script>
 <script src="js/data-lingue.js"></script>
 <script src="js/lingue.js"></script>

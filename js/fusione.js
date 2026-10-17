@@ -119,6 +119,10 @@
       name: recente.name,
       avatar: recente.avatar,
       eta: recente.eta || a.eta || b.eta,
+      /* il compleanno e' una scelta come il nome, non un progresso:
+         lo porta la copia aggiornata piu' di recente. Il || tiene
+         quello che c'e' se la piu' recente non l'ha mai messo. */
+      nato: recente.nato || a.nato || b.nato || null,
       level: recente.level || a.level,
       titolo: recente.titolo !== undefined ? recente.titolo : a.titolo,
       tema: recente.tema || a.tema,
