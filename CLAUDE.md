@@ -1185,3 +1185,62 @@ si vede subito che sono un'altra cosa.
 
 `BT.mille(n)` mette i punti alle migliaia (100000 → 100.000). E' scritta a mano, senza regex: un
 numero lungo senza separatori, a un bambino, non si legge.
+
+---
+
+# "Mettilo sulla Home" dentro il gioco (`js/installa.js`, 17/10/2026)
+
+Riferito dopo aver dato il QR ai compagni di classe: *"fanno fatica a seguire le istruzioni
+per salvare la app sul telefono e giocano dal browser"*.
+
+La diagnosi non e' "le istruzioni sono scritte male". E' che **ci sono delle istruzioni**.
+`installa.html` chiedeva di leggere quattro passi, su un'altra pagina, prima di aver capito
+se il gioco valeva la pena. Nessun bambino lo fa.
+
+> Regola che ne esce, e vale oltre questo caso: **istruzioni che nessuno segue non si
+> riscrivono, si tolgono.** Dove il browser sa fare la cosa da solo, serve un tasto.
+
+## Le due strade, che non sono una scelta
+- **Android e computer (Chrome/Edge):** il browser manda `beforeinstallprompt`. Lo si mette
+  da parte e si offre **un tasto solo**; il dialogo lo fa il sistema. Zero passi da leggere.
+- **iPhone:** quell'evento non arriva mai e Apple non da' nessun modo di installare via
+  codice. Restano due passi — ma dentro il gioco, e con la **freccia del tasto Condividi
+  disegnata in SVG**, non descritta a parole. "Il quadrato con la freccia che esce" e' una
+  frase da decifrare; il disegno si riconosce.
+- **Firefox e Safari su Mac:** non installano. Li' la barra **non compare affatto**: una
+  barra che dice "arrangiati" e' peggio del silenzio. Il tasto "Mettilo sul telefono" in
+  quel caso lascia andare il giocatore su `installa.html`, che resta il ripiego.
+
+## Le tre regole del file — sono quelle che lo rendono accettabile
+1. **Non si vede subito.** Compare quando il giocatore ha gia' risposto a qualcosa, oppure
+   alla seconda apertura. Chiedere di installare a chi e' appena arrivato e' chiedere il
+   numero di telefono all'ingresso.
+2. **Non si vede mai durante una partita.** Coprirebbe le risposte. `BT.show()` e' il punto
+   unico: menu e fine partita la mostrano, tutto il resto la nasconde.
+3. **Il "no" dura.** Chi preme la × non la rivede per **quattordici giorni**. La memoria sta
+   in un `localStorage` suo (`brain-time-installa`), **non nel profilo**: chi ha detto no e'
+   il telefono, non il giocatore — se Gabri la scaccia non ha senso riproporla a Diego sullo
+   stesso telefono. Il tasto esplicito "Mettilo sul telefono" scavalca il silenzio, perche'
+   li' l'ha chiesto lui.
+
+## Due trappole trovate collaudando, non in produzione
+
+**`requestAnimationFrame` non puo' far comparire niente.** La prima versione aggiungeva la
+classe `.su` dentro un `rAF`. Nel pannello di anteprima — e in qualunque scheda in secondo
+piano — i fotogrammi non arrivano mai, quindi la barra restava fuori dallo schermo **per
+sempre**: non un'animazione mancata, il tasto che non si vede. Adesso `void offsetWidth`,
+che e' sincrono. E' la stessa regola gia' scritta per `juice.js`: **niente di necessario
+dentro un fotogramma.**
+
+**La barra si ricostruisce a ogni comparsa, non si riusa.** `beforeinstallprompt` arriva
+quando pare al browser, anche secondi dopo il caricamento. Una barra costruita prima
+avrebbe mostrato per sempre i due passi di iPhone su un Android che nel frattempo sapeva
+installare con un tasto.
+
+**Lo spazio sotto si misura, non si indovina:** `padding-bottom` del body = altezza vera
+della barra + 12. Il testo va a capo in modo diverso a 360 e a 430 pixel; un numero fisso
+o lascia uno scalino vuoto o copre l'ultimo tasto.
+
+## Dove sta e dove non sta
+`index.html` e `sw.js` soltanto. **Non** in `online/build.sh`: nella pagina di famiglia il
+gioco vive dentro claude.ai e non c'e' niente da installare.

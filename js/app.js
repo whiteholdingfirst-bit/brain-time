@@ -29,6 +29,15 @@
     var back = document.getElementById('btn-back');
     back.style.visibility = (id === 'screen-game' || id === 'screen-pass') ? 'hidden' : 'visible';
 
+    /* La barra "mettilo sulla Home" si affaccia solo dove non
+       disturba: il menu e la fine di una partita. Durante il gioco
+       coprirebbe le risposte, quindi sparisce. */
+    if (BT.installa) {
+      if (id === 'screen-result') BT.installa.forse(true);
+      else if (id === 'screen-menu') BT.installa.forse(!!(player && player.answered));
+      else BT.installa.viaDalloSchermo();
+    }
+
     BT.refreshTopbar();
   };
 
@@ -1415,6 +1424,7 @@
        installarlo. La CSS lo fa da sola dove il browser dichiara
        display-mode, ma iPhone risponde solo a navigator.standalone. */
     if (window.navigator.standalone === true) document.body.classList.add('come-app');
+    if (BT.installa) BT.installa.avvio();
 
     document.getElementById('btn-back').onclick = goBack;
 
@@ -1478,6 +1488,15 @@
     };
 
     document.getElementById('btn-rules').onclick = function () { BT.show('screen-rules'); };
+
+    /* "Mettilo sul telefono": se il browser sa installare, o se siamo
+       su iPhone, la risposta sta qui dentro in un tasto solo e non si
+       va da nessuna parte. La pagina di istruzioni resta il ripiego
+       per i browser che non sanno installare. */
+    var bInst = document.getElementById('btn-installa');
+    if (bInst) bInst.onclick = function (ev) {
+      if (BT.installa && BT.installa.subito()) ev.preventDefault();
+    };
     document.getElementById('btn-change-player').onclick = function () {
       player = null;
       applicaTema(null);

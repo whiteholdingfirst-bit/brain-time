@@ -4,7 +4,7 @@ Questo file serve a **riprendere il lavoro da un'altra sessione**, su un altro c
 telefono. Le note tecniche stanno in `CLAUDE.md`; qui c'è solo lo stato: cosa è stato deciso,
 cosa è fatto, cosa manca e in che ordine.
 
-Ultimo aggiornamento: **20 settembre 2026**. Ultimo lavoro sul codice: **20 settembre 2026**.
+Ultimo aggiornamento: **17 ottobre 2026**. Ultimo lavoro sul codice: **17 ottobre 2026**.
 
 ---
 
@@ -52,6 +52,11 @@ che è indietro di una modifica (i traguardi): vedi sotto.
   con lo spessore della plastica, icone disegnate, 16 temi diventati "il tuo neon".
 - **Cassa Suprema**: in cima alla scala delle rarita' si scelgono tre stelle, e una su tre
   trasforma la cassa nella Suprema, il 50% in piu'.
+- **Il gioco e' stato dato ai compagni di classe** (ottobre). Primo ritorno dal campo: non
+  riuscivano a installarlo e giocavano dal browser. Risolto togliendo le istruzioni: dentro il
+  gioco c'e' una barra "Mettilo sulla Home" che su Android e computer e' **un tasto solo**, e su
+  iPhone mostra i due passi con la freccia disegnata. Non compare prima che abbiano giocato, mai
+  durante una partita, e chi dice no non la rivede per due settimane.
 - **Traguardi sui punti cervello** (20/09): dieci soglie da 1.000 a 100.000 punti, ognuna con un
   premio. I tre titoli e i due avatar dei traguardi **non si comprano**: si vedono in Negozio
   bloccati. Si vede a che punto sei nel menu e l'elenco completo nelle Statistiche.

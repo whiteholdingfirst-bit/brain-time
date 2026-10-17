@@ -1041,6 +1041,49 @@ body[data-tema="vulcano"], body[data-tema="deserto"]{
 .trag-stato{margin-left:auto; flex:none; font-size:13.5px; font-weight:700; color:var(--inchiostro-soft); text-align:right}
 .trag-riga.preso .trag-stato{color:var(--verde); font-size:19px}
 
+/* ---------- "mettilo sulla Home" (js/installa.js) ----------
+   Barra in basso, sopra tutto. Non e' un popup: non blocca niente,
+   non ha un velo dietro, e si scaccia con una X. Un bambino che
+   vuole giocare deve poterla ignorare senza pensarci. */
+.inst-barra{
+  position:fixed; left:0; right:0; bottom:0; z-index:60;
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));
+  background:var(--carta); color:var(--inchiostro);
+  border-top:2px solid var(--neon);
+  box-shadow:0 -10px 30px rgba(0,0,0,.45);
+  transform:translateY(110%); transition:transform .28s ease;
+}
+.inst-barra.su{transform:none}
+.inst-testo{flex:1; min-width:0; font-size:14.5px; line-height:1.45}
+/* solo il titolo prende il carattere dell'insegna: un <b> dentro la
+   frase ("poi <b>Aggiungi a Home</b>") deve restare un grassetto
+   normale, se no sembrano due titoli */
+.inst-tit{display:block; font-family:Bungee,Impact,sans-serif;
+  font-weight:400; font-size:16px; color:var(--azzurro-800); letter-spacing:.01em}
+.inst-testo span{color:var(--inchiostro-soft)}
+.inst-ico{
+  width:1.15em; height:1.15em; vertical-align:-.22em;
+  margin:0 1px; color:var(--azzurro-800);
+}
+.inst-si{
+  flex:none; font-family:Bungee,Impact,sans-serif; font-size:15px; letter-spacing:.02em;
+  border:0; border-radius:13px; padding:12px 18px; cursor:pointer;
+  background:var(--neon); color:#08202b; box-shadow:0 4px 0 var(--neon-cupo);
+}
+.inst-si:active{transform:translateY(2px); box-shadow:0 2px 0 var(--neon-cupo)}
+.inst-no{
+  flex:none; border:0; background:none; cursor:pointer; padding:6px 4px;
+  color:var(--inchiostro-soft); font-size:26px; line-height:1;
+}
+/* La barra copre il fondo della pagina e sotto ci va lasciato spazio,
+   se no l'ultimo tasto di una schermata lunga finisce dietro. Quanto,
+   pero', dipende da quante righe va a capo il testo: lo misura
+   js/installa.js e lo scrive qui sopra come stile inline. */
+@media (prefers-reduced-motion: reduce){
+  .inst-barra{transition:none}
+}
+
 /* tre stelle in riga: su telefono devono starci tutte senza scorrere,
    quindi sono piu' piccole di quella singola e la riga va a capo solo
    come ultima risorsa */
