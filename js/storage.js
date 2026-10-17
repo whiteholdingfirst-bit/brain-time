@@ -459,12 +459,18 @@
     /* --- sbloccabili permanenti --- */
     /* i profili creati prima di questa versione non hanno i campi nuovi */
     normalizza: function (p) {
-      if (!p.sbloccati) p.sbloccati = { avatar: [], titolo: [], tema: [] };
-      ['avatar', 'titolo', 'tema'].forEach(function (k) {
+      if (!p.sbloccati) p.sbloccati = { avatar: [], titolo: [], tema: [], veste: [] };
+      ['avatar', 'titolo', 'tema', 'veste'].forEach(function (k) {
         if (!Array.isArray(p.sbloccati[k])) p.sbloccati[k] = [];
       });
       if (p.titolo === undefined) p.titolo = null;
       if (!p.tema) p.tema = 'azzurro';
+      /* veste: null = segue il calendario; un id = la indossa sempre */
+      if (p.veste === undefined) p.veste = null;
+      /* le risposte date alla domanda "vuoi questa veste?", una per
+         occorrenza ('halloween-2026'): cosi' il no vale per questa festa
+         e non per sempre, e l'anno dopo la domanda si rifa'. */
+      if (!p.skinRisposte || typeof p.skinRisposte !== 'object') p.skinRisposte = {};
       if (!p.casse) p.casse = { pronte: 0, moltiplicatore: 1, aperte: 0 };
       if (!Array.isArray(p.scoperte)) p.scoperte = [];
       if (!p.labirinto) p.labirinto = { livello: 1, completati: 0, tempi: {} };
@@ -584,6 +590,11 @@
       if (tipo === 'titolo') p.titolo = id;
       if (tipo === 'tema') p.tema = id;
       if (tipo === 'avatar') p.avatar = id;
+      /* Mancava, e il difetto non si vedeva nell'interfaccia: la veste
+         veniva pagata e sbloccata ma non indossata, quindi sembrava che
+         il tasto non facesse niente. Chi compra qualcosa se lo aspetta
+         addosso subito, come per i temi e i titoli. */
+      if (tipo === 'veste') p.veste = (id === 'automatica' ? null : id);
       save();
       return true;
     },
@@ -593,6 +604,9 @@
       if (tipo === 'titolo') p.titolo = (p.titolo === id ? null : id);
       else if (tipo === 'tema') p.tema = id;
       else if (tipo === 'avatar') p.avatar = id;
+      /* 'automatica' non e' una veste: e' il modo per tornare a seguire
+         il calendario, e vale come "nessuna scelta a mano" */
+      else if (tipo === 'veste') p.veste = (id === 'automatica' ? null : id);
       save();
     },
 

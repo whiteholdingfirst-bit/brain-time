@@ -69,6 +69,19 @@
     return out.slice(Math.max(0, out.length - tetto));
   }
 
+  /* Le risposte date alle feste ('halloween-2026': true/false). Si
+     mettono insieme tutte, poi le eventuali discordanze le risolve la
+     copia aggiornata piu' di recente: e' una preferenza, non un
+     progresso, quindi vince l'ultima volonta' espressa. */
+  function fondiRisposte(a, b, recente) {
+    var out = {}, k;
+    a = a || {}; b = b || {}; recente = recente || {};
+    for (k in a) out[k] = a[k];
+    for (k in b) out[k] = b[k];
+    for (k in recente) out[k] = recente[k];
+    return out;
+  }
+
   function fondiTempi(a, b) {
     var out = {}, k;
     a = a || {}; b = b || {};
@@ -144,8 +157,15 @@
       sbloccati: {
         avatar: unisci(a.sbloccati && a.sbloccati.avatar, b.sbloccati && b.sbloccati.avatar),
         titolo: unisci(a.sbloccati && a.sbloccati.titolo, b.sbloccati && b.sbloccati.titolo),
-        tema:   unisci(a.sbloccati && a.sbloccati.tema,   b.sbloccati && b.sbloccati.tema)
+        tema:   unisci(a.sbloccati && a.sbloccati.tema,   b.sbloccati && b.sbloccati.tema),
+        veste:  unisci(a.sbloccati && a.sbloccati.veste,  b.sbloccati && b.sbloccati.veste)
       },
+
+      /* la veste indossata e' una scelta come il tema; null = calendario */
+      veste: (recente.veste !== undefined ? recente.veste : a.veste) || null,
+      /* le risposte alle feste: si uniscono, e dove le due copie dicono
+         cose diverse vince quella aggiornata piu' di recente */
+      skinRisposte: fondiRisposte(a.skinRisposte, b.skinRisposte, recente.skinRisposte),
       scoperte: unisci(a.scoperte, b.scoperte),
 
       /* ⚠️ I traguardi DEVONO restare, e non e' un dettaglio: sono

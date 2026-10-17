@@ -1339,3 +1339,70 @@ piano non deve consumare batteria per delle foglie che nessuno guarda.
 
 La chip sotto il logo dice *perche'* il gioco ha cambiato faccia: senza, uno pensa di aver
 premuto qualcosa per sbaglio.
+
+## Le vesti diventano opzionali e si comprano (17/10/2026, stessa giornata)
+
+Chiesto subito dopo: *"si possono mettere skin opzionali e si possono cambiare, anzi quando metti
+una nuova skin in base al calendario chiedi se l'utente vuole quella proposta o preferisce quella
+standard. Mostra tutte le skin nello shop, le puoi sbloccare ma con l'uso delle coppe."*
+
+### La tensione da sciogliere prima di scrivere codice
+Se le vesti **si comprano**, il calendario non puo' regalarle; se il calendario **le regala**, che
+cosa si compra? Le due richieste sembrano contraddirsi. La risposta che le tiene insieme:
+
+> Il calendario la regala **per la sua festa**. Il Negozio vende **il diritto di indossarla quando
+> non e' la sua festa** — Halloween a giugno, il Natale a luglio.
+
+E' scritto nella nota del reparto, perche' far pagare una cosa che arriva gratis **senza dirlo**
+sarebbe una fregatura. Se un domani sembrasse poco chiaro, la leva e' quel testo, non il prezzo.
+
+**Il compleanno non si vende**, e non e' una dimenticanza: non e' un costume, e' un augurio.
+Indossarlo un giorno a caso non vorrebbe dire niente.
+
+### La precedenza, adesso a tre livelli
+
+    veste comprata e indossata  >  calendario (se ha detto di si')  >  tema del Negozio
+
+La veste scelta a mano vince anche su Natale: chi l'ha comprata l'ha comprata per metterla quando
+vuole, e se il calendario gliela cambiasse avrebbe buttato le coppe. `p.veste = null` vuol dire
+"segui il calendario", ed e' quello che fa l'articolo **Automatica** (`cost: 0`, sempre posseduto,
+come il tema `azzurro`).
+
+### La domanda, e perche' arriva DOPO aver vestito il gioco
+`BT.skin.daChiedere(p)` → `chiediVeste()`. Quando si arriva al menu il gioco **si e' gia' vestito**:
+la domanda non e' "vuoi provarla" ma "la tengo?", e la risposta si vede dietro al testo mentre si
+decide. Chiedere prima vorrebbe dire far scegliere a scatola chiusa.
+
+La risposta vive in `p.skinRisposte`, **nel profilo e non nel DOM** (online ogni salvataggio
+ripubblica la pagina): stessa regola di `cassaDaLeggere` e `traguardoDaLeggere`. La domanda sta
+**dopo** casse e traguardi in `renderMenu`: i premi vengono prima, quella e' solo una scelta di
+colore. Per il **compleanno non si chiede niente**: gli auguri si fanno.
+
+### ⚠️ La chiave dell'occorrenza, e il 1 gennaio
+Le risposte sono salvate per **occorrenza**, non per veste: `'halloween-2026'`. Un no vale per la
+festa di quest'anno e l'anno prossimo la domanda si rifa'.
+
+Il campo `coda` sulle vesti che scavalcano il capodanno esiste solo per questo: senza, il
+**3 gennaio** avrebbe un'altra chiave dal **25 dicembre**, e la domanda sul Natale si
+ripresenterebbe il 1 gennaio in mezzo alle vacanze. Verificato: tutte e due danno `natale-2026`.
+
+`rispondi()` fa anche pulizia: una dozzina di voci l'anno, e quelle di tre Natali fa non servono.
+Si tiene l'anno in corso e quello prima.
+
+### Due difetti trovati collaudando, nessuno arrivato a nessuno
+
+**`sblocca` non conosceva il reparto nuovo.** Comprare una veste scalava le coppe e la sbloccava
+ma **non la indossava**: `p.veste` restava null, quindi il tasto sembrava non fare niente. Chi
+compra qualcosa se lo aspetta addosso subito, come per temi e titoli.
+
+**Gli addobbi si dipingevano sopra le carte.** `.bg-skin` aveva `z-index:0` ed e' l'ultimo figlio
+del body: un elemento **posizionato** con z-index 0 si dipinge **sopra** il contenuto non
+posizionato (le carte sono `static`), quindi le foglie finivano davanti ai testi delle domande.
+`.bg-books` se la cava con 0 solo perche' sta al 5% di opacita' e non si vede; al 18% si vede
+eccome. Risolto con **z-index negativo** (−1): dietro alle carte, davanti al fondo.
+
+### Nota sul collaudo
+Il pannello di anteprima **rifiuta i file sopra ~512 KB** (il bundle completo e' arrivato a 534) e
+non dice perche': sembra che il file non esista. Per provare l'interfaccia conviene un bundle
+ridotto che salta le banche di domande — ma **non** `data-curiosita.js`, che `renderMenu` usa per
+contare le Scoperte, se no si rompe con un errore che sembra un difetto del gioco e non del test.

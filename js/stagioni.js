@@ -74,7 +74,10 @@
      --------------------------------------------------------- */
   var VESTI = [
     /* --- feste --- */
-    { id: 'natale', nome: 'Natale', ico: '🎄', tipo: 'festa',
+    /* 'coda' = fin dove arriva la parte dell'anno DOPO: serve a dare un
+       nome all'occorrenza (il 3 gennaio sta ancora nel Natale del 2026,
+       se no la domanda "la vuoi?" si rifarebbe il 1 gennaio). */
+    { id: 'natale', nome: 'Natale', ico: '🎄', tipo: 'festa', coda: 1,
       quando: 'dal 20 dicembre al 6 gennaio',
       vale: function (d) { return dentro(d, 12, 20, 1, 6); } },
 
@@ -124,7 +127,7 @@
        resterebbe scoperto. Il confronto e' su mese+giorno, quindi
        mettere 29 non rompe niente negli anni normali - quel
        giorno semplicemente non arriva mai. */
-    { id: 'inverno', nome: 'Inverno', ico: '❄️', tipo: 'stagione',
+    { id: 'inverno', nome: 'Inverno', ico: '❄️', tipo: 'stagione', coda: 2,
       quando: 'dal 1 dicembre a fine febbraio',
       vale: function (d) { return dentro(d, 12, 1, 2, 29); } },
 
@@ -190,6 +193,24 @@
 
     pasquaDi: function (anno) { return pasqua(anno); },
     fineScuolaDi: function (anno) { return secondoVenerdiDiGiugno(anno); },
+
+    /* =======================================================
+       Il nome di QUESTA volta: 'halloween-2026'.
+
+       Serve per ricordare la risposta alla domanda "la vuoi?"
+       senza inchiodarla per sempre: un no vale per la festa di
+       quest'anno, e l'anno prossimo si richiede.
+
+       Il campo 'coda' esiste per questo: il 3 gennaio sta ancora
+       dentro il Natale del 2026, e senza quel conto la domanda si
+       ripresenterebbe il 1 gennaio in mezzo alle vacanze.
+       ======================================================= */
+    occorrenza: function (veste, data) {
+      var d = data || new Date();
+      var anno = d.getFullYear();
+      if (veste.coda && (d.getMonth() + 1) <= veste.coda) anno -= 1;
+      return veste.id + '-' + anno;
+    },
 
     tutte: function () { return VESTI.concat([COMPLEANNO]); },
 
@@ -314,7 +335,64 @@
     adesso: function (p, quando) {
       var s = (BT.store && BT.store.settings) ? BT.store.settings() : {};
       if (s.skin === false) return null;
-      return BT.stagioni.attiva(quando || new Date(), p && p.nato);
+
+      /* 1. La veste scelta a mano nel Negozio vince su tutto. Chi l'ha
+            comprata l'ha comprata per metterla quando vuole: se poi il
+            calendario gliela cambiasse, i soldi li avrebbe buttati. */
+      if (p && p.veste) {
+        var mia = BT.stagioni.di(p.veste);
+        if (mia) return mia;
+      }
+
+      /* 2. Il calendario, se il giocatore non ha gia' detto di no a
+            questa festa. Il no vale per l'occorrenza, non per sempre. */
+      var d = quando || new Date();
+      var v = BT.stagioni.attiva(d, p && p.nato);
+      if (!v) return null;
+      if (p && p.skinRisposte &&
+          p.skinRisposte[BT.stagioni.occorrenza(v, d)] === false) return null;
+      return v;
+    },
+
+    /* =======================================================
+       La domanda da fare: "e' arrivato Halloween, lo vuoi?"
+
+       Risponde null quando non c'e' niente da chiedere. Non si
+       chiede mai:
+       - se ha scelto una veste a mano (ha gia' deciso lui);
+       - per il COMPLEANNO: gli auguri non si chiedono, si fanno.
+       ======================================================= */
+    daChiedere: function (p, quando) {
+      if (!p) return null;
+      var s = (BT.store && BT.store.settings) ? BT.store.settings() : {};
+      if (s.skin === false || p.veste) return null;
+
+      var d = quando || new Date();
+      var v = BT.stagioni.attiva(d, p.nato);
+      if (!v || v.id === 'compleanno') return null;
+
+      var k = BT.stagioni.occorrenza(v, d);
+      if (p.skinRisposte && p.skinRisposte[k] !== undefined) return null;
+      return { veste: v, chiave: k };
+    },
+
+    /* La risposta vive nel PROFILO, non nel DOM: online ogni
+       salvataggio ripubblica la pagina e il DOM sparisce. Stessa
+       regola delle casse e dei traguardi. */
+    rispondi: function (p, chiave, si) {
+      if (!p || !chiave) return;
+      BT.store.normalizza(p);
+      p.skinRisposte[chiave] = !!si;
+
+      /* Pulizia: una risposta per festa all'anno fa una dozzina di
+         voci l'anno, e non servono quelle di tre Natali fa. Si tiene
+         l'anno in corso e quello prima. */
+      var limite = (new Date()).getFullYear() - 1;
+      Object.keys(p.skinRisposte).forEach(function (k) {
+        var anno = parseInt(k.split('-').pop(), 10);
+        if (anno && anno < limite) delete p.skinRisposte[k];
+      });
+      BT.store.save();
     },
 
     /* ⚠️ Nel foglio di stile il blocco data-skin sta DOPO quello
@@ -332,5 +410,73 @@
       return v;
     }
   };
+
+})(window.BT);
+
+/* =========================================================
+   LE VESTI AL NEGOZIO
+
+   ⚠️ Qui c'e' una tensione da capire prima di toccare i prezzi.
+   Il calendario le REGALA per la loro festa: a Halloween il gioco
+   si veste da Halloween senza pagare niente. Allora che cosa si
+   compra? **Il diritto di indossarla quando non e' la sua festa.**
+   Halloween a giugno, il Natale a luglio.
+
+   Se un domani sembrasse poco chiaro, la risposta non e' alzare i
+   prezzi: e' scriverlo meglio nella nota del reparto. Far pagare
+   una cosa che arriva gratis e non dirlo sarebbe una fregatura.
+
+   Il compleanno NON si vende, e non e' una dimenticanza: non e' un
+   costume, e' un augurio. Indossarlo un giorno a caso non vuol dire
+   niente.
+
+   Prezzi in scala coi temi (60-130): le quattro stagioni costano
+   poco perche' durano mesi e le vedi comunque; le feste costano di
+   piu' perche' durano pochi giorni.
+   ========================================================= */
+(function (BT) {
+  'use strict';
+  if (!BT.SBLOCCABILI) return;
+
+  BT.SBLOCCABILI.veste = [
+    { id: 'automatica', cost: 0, base: true, name: 'Automatica',
+      desc: 'Segue il calendario: a ogni festa il gioco te la propone e decidi tu.',
+      col1: '#31d8ff', col2: '#1b7fa8' },
+
+    { id: 'autunno', cost: 60, name: 'Autunno 🍂',
+      desc: 'Foglie e castagne. Arriva da sola il 1 ottobre.',
+      col1: '#ff9a3d', col2: '#8f4408' },
+    { id: 'inverno', cost: 60, name: 'Inverno ❄️',
+      desc: 'Ghiaccio e neve. Arriva da sola il 1 dicembre.',
+      col1: '#7fe3ff', col2: '#226d85' },
+    { id: 'primavera', cost: 60, name: 'Primavera 🌸',
+      desc: 'Fiori e prati. Arriva da sola il 1 marzo.',
+      col1: '#ff8fd0', col2: '#9e2f74' },
+    { id: 'estate', cost: 60, name: 'Estate 🌞',
+      desc: 'Mare e sole. Arriva da sola il 1 giugno.',
+      col1: '#2ee8d0', col2: '#096d62' },
+
+    { id: 'primomaggio', cost: 70, name: 'Primo maggio 🛠️',
+      desc: 'La festa dei lavoratori. Un giorno solo all\'anno.',
+      col1: '#ff5a52', col2: '#8d1a15' },
+    { id: 'duegiugno', cost: 70, name: 'Due giugno 🇮🇹',
+      desc: 'Il tricolore della Repubblica. Un giorno solo all\'anno.',
+      col1: '#5ce89a', col2: '#0c6b3d' },
+    { id: 'finescuola', cost: 80, name: 'Fine della scuola 🎒',
+      desc: 'Il secondo venerd&igrave; di giugno. Dura un giorno, ma che giorno.',
+      col1: '#ffd93d', col2: '#8a6c00' },
+    { id: 'carnevale', cost: 85, name: 'Carnevale 🎭',
+      desc: 'Coriandoli e maschere. Sei giorni all\'anno, e cambiano ogni anno.',
+      col1: '#ff4fd8', col2: '#8c1773' },
+    { id: 'pasqua', cost: 85, name: 'Pasqua 🐣',
+      desc: 'Pulcini e uova. Solo la settimana di Pasqua.',
+      col1: '#ffd24d', col2: '#8a6500' },
+    { id: 'halloween', cost: 90, name: 'Halloween 🎃',
+      desc: 'Zucche e fantasmi. Dal 20 ottobre al 1 novembre.',
+      col1: '#ff7a18', col2: '#7d3400' },
+    { id: 'natale', cost: 110, name: 'Natale 🎄',
+      desc: 'Rosso, verde e regali. Dal 20 dicembre al 6 gennaio.',
+      col1: '#ff5a66', col2: '#8d1623' }
+  ];
 
 })(window.BT);

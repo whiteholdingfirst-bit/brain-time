@@ -351,7 +351,12 @@
     var daLeggere = BT.casse.daLeggere(player);
     if (daLeggere) { mostraPremi(player, daLeggere); return; }
     var rimandata = BT.casse.rimandata(player);
-    if (rimandata) mostraRimandata(player, rimandata);
+    if (rimandata) { mostraRimandata(player, rimandata); return; }
+
+    /* Per ultima la domanda sulla veste: i premi vengono prima, perche'
+       sono una ricompensa e questa e' solo una scelta di colore. */
+    var chiesta = BT.skin && BT.skin.daChiedere(player);
+    if (chiesta) chiediVeste(player, chiesta);
   };
 
   /* Le preferenze del dispositivo (difficolta', suoni) non vanno pubblicate:
@@ -714,7 +719,9 @@
     aiuti:  'Si consumano quando li usi: comprane quanti ne vuoi.',
     avatar: 'Una volta comprati restano tuoi per sempre e si aggiungono alla griglia degli avatar.',
     titolo: 'Il titolo compare sotto il tuo nome, nel menu e in classifica. Puoi cambiarlo quando vuoi.',
-    tema:   'Cambia i colori di tutto il gioco. Anche questi restano sbloccati per sempre.'
+    tema:   'Cambia i colori di tutto il gioco. Anche questi restano sbloccati per sempre.',
+    /* Va detto, se no sembra che si venda una cosa che arriva gratis. */
+    veste:  'Alle feste il gioco si veste da solo, gratis. Qui le vesti si <b>comprano per tenerle</b>: una volta tua, la puoi indossare anche quando non &egrave; la sua festa. Con <b>Automatica</b> torni a seguire il calendario.'
   };
 
   function applicaTema(p) {
@@ -778,9 +785,12 @@
       var daTraguardo = art.cost === null;
       var inUso = (reparto === 'titolo' && player.titolo === art.id) ||
                   (reparto === 'tema' && player.tema === art.id) ||
+                  /* 'automatica' e' in uso quando non c'e' nessuna scelta
+                     a mano: p.veste null vuol dire "segui il calendario" */
+                  (reparto === 'veste' && (player.veste || 'automatica') === art.id) ||
                   (reparto === 'avatar' && player.avatar === art.id);
 
-      var icona = reparto === 'tema'
+      var icona = (reparto === 'tema' || reparto === 'veste')
         ? '<div class="anteprima-tema" style="background:linear-gradient(135deg,' +
             art.col1 + ',' + art.col2 + ')"></div>'
         : '<div class="shop-ico">' + (reparto === 'avatar' ? art.id : '🎖️') + '</div>';
@@ -802,7 +812,7 @@
           if (BT.store.sblocca(player, reparto, art.id)) {
             BT.sfx.play('livello');
             BT.toast(art.name + ' sbloccato e messo in uso!');
-            if (reparto === 'tema') applicaTema(player);
+            if (reparto === 'tema' || reparto === 'veste') applicaTema(player);
             renderShop(); BT.refreshTopbar();
           } else BT.toast('Coppe insufficienti. Gioca per guadagnarne!');
         };
@@ -812,7 +822,7 @@
         usa.disabled = inUso && reparto !== 'titolo';
         usa.onclick = function () {
           BT.store.usa(player, reparto, art.id);
-          if (reparto === 'tema') applicaTema(player);
+          if (reparto === 'tema' || reparto === 'veste') applicaTema(player);
           BT.sfx.play('click');
           renderShop(); BT.refreshTopbar();
         };
@@ -1483,6 +1493,51 @@
       BT.show('screen-menu'); BT.renderMenu();
     };
   };
+
+  /* ================= "e' arrivata una festa, la vuoi?" =================
+     Il gioco si e' gia' vestito quando si arriva qui: la domanda non e'
+     "vuoi provarla", e' "la tengo?" - e la risposta si vede dietro al
+     testo mentre si decide. Chiedere prima di mostrarla vorrebbe dire
+     far scegliere a scatola chiusa.
+
+     La risposta vive nel profilo (p.skinRisposte), non nel DOM: online
+     ogni salvataggio ripubblica la pagina e il DOM sparisce. Vale per
+     l'occorrenza di quest'anno, non per sempre. */
+  function chiediVeste(p, domanda) {
+    var v = domanda.veste;
+    var html = '<div class="cassa-box" data-rar="traguardo">' +
+      '<div class="cassa-ico">' + v.ico + '</div>' +
+      '<div class="cassa-titolo">&Egrave; arrivato<br>' + v.nome + '</div>' +
+      '<div class="cassa-molt"><span class="rar-tag rar-traguardo">' +
+        v.quando + '</span></div>' +
+      '</div>' +
+      '<div class="premio traguardo"><div class="premio-ico">🎨</div><div>' +
+        '<div class="premio-nome">Il gioco si &egrave; vestito cos&igrave;</div>' +
+        '<div class="premio-testo">Guarda i colori qui dietro: sono quelli di ' +
+          v.nome + '. Se ti piacciono lo lascio cos&igrave; fino a quando finisce la festa, ' +
+          'poi torna il tuo tema di sempre.</div>' +
+      '</div></div>' +
+      '<button class="btn btn-gold btn-block" id="veste-si">&#10004; S&igrave;, mi piace</button>' +
+      '<button class="btn btn-ghost btn-block" id="veste-no">Preferisco il mio tema</button>' +
+      '<div class="cassa-leggi">Puoi cambiare idea quando vuoi: ' +
+        '<b>Negozio &rarr; Vesti</b>, oppure spegnerle tutte dalle Impostazioni.</div>';
+
+    var box = document.getElementById('cassa-body');
+    box.innerHTML = html;
+    BT.show('screen-cassa');
+    BT.refreshTopbar();
+
+    box.querySelector('#veste-si').onclick = function () {
+      BT.skin.rispondi(p, domanda.chiave, true);
+      BT.sfx.play('coppa');
+      BT.show('screen-menu'); BT.renderMenu();
+    };
+    box.querySelector('#veste-no').onclick = function () {
+      BT.skin.rispondi(p, domanda.chiave, false);
+      applicaTema(p);                 /* torna subito il suo tema */
+      BT.show('screen-menu'); BT.renderMenu();
+    };
+  }
   /* ================= scoperte ================= */
   function renderScoperte() {
     BT.store.normalizza(player);

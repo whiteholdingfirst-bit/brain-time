@@ -776,8 +776,14 @@ body[data-skin="compleanno"]{ --neon:#ff5fb0; --neon-chiaro:#ffb3d9; --neon-cupo
    Sono FERME di proposito: una scheda in secondo piano non deve
    consumare batteria per delle foglie che nessuno guarda, e un
    telefono vecchio non deve rallentare per un addobbo. */
+/* ⚠️ z-index NEGATIVO, e non 0 come .bg-books.
+   Un elemento posizionato con z-index 0 si dipinge SOPRA il contenuto
+   non posizionato (le carte sono 'static'), quindi gli addobbi
+   finivano davanti ai testi delle domande. .bg-books se la cava con 0
+   solo perche' e' al 5% di opacita' e non si vede; a 18% si vede
+   eccome. Con -1 restano dietro alle carte e davanti al fondo. */
 .bg-skin{
-  position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden;
 }
 .bg-skin span{
   position:absolute; line-height:1; user-select:none;
