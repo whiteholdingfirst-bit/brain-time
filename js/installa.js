@@ -104,7 +104,12 @@
     } else {
       /* iPhone: due passi, con la freccia disegnata */
       dentro = '<div class="inst-testo"><b class="inst-tit">Mettilo sulla Home</b>' +
-          '<span>Tocca ' + iconaCondividi() + ' qui sotto, poi <b>Aggiungi a Home</b>.</span></div>';
+          /* L'etichetta va data in tutte e due le lingue: parecchi
+             telefoni dei ragazzi sono impostati in inglese, e li'
+             "Aggiungi a Home" semplicemente non esiste - cercano una
+             voce che non c'e' e si fermano. */
+          '<span>Tocca l&rsquo;icona ' + iconaCondividi() + ' qui sotto, poi dal menu ' +
+          'seleziona <b>Aggiungi a Home</b> (in inglese <b>Add to Home Screen</b>).</span></div>';
     }
 
     el.innerHTML = dentro +
