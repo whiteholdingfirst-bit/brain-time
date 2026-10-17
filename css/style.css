@@ -784,19 +784,34 @@ body[data-skin="compleanno"]{ --neon:#ff5fb0; --neon-chiaro:#ffb3d9; --neon-cupo
    Sono FERME di proposito: una scheda in secondo piano non deve
    consumare batteria per delle foglie che nessuno guarda, e un
    telefono vecchio non deve rallentare per un addobbo. */
-/* ⚠️ z-index NEGATIVO, e non 0 come .bg-books.
-   Un elemento posizionato con z-index 0 si dipinge SOPRA il contenuto
-   non posizionato (le carte sono 'static'), quindi gli addobbi
-   finivano davanti ai testi delle domande. .bg-books se la cava con 0
-   solo perche' e' al 5% di opacita' e non si vede; a 18% si vede
-   eccome. Con -1 restano dietro alle carte e davanti al fondo. */
-.bg-skin{
+/* ---------- la scenografia delle vesti (js/scena.js) ----------
+   ⚠️ z-index NEGATIVO, come era per gli addobbi e per la stessa
+   ragione: un elemento posizionato con z-index 0 si dipinge SOPRA il
+   contenuto non posizionato (le carte sono 'static'), e la scena
+   finirebbe davanti ai testi delle domande. Con -1 sta dietro alle
+   carte e davanti al fondo. */
+.bt-scena{
   position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden;
 }
-.bg-skin span{
-  position:absolute; line-height:1; user-select:none;
-  filter:saturate(.8);
+/* L'astro e il suo alone sono elementi normali con aspect-ratio 1:
+   un cerchio resta un cerchio su qualunque schermo. In un SVG
+   stirato diventava un'ellisse. */
+.sc-astro, .sc-alone{
+  position:absolute; aspect-ratio:1; border-radius:50%;
+  transform:translate(-50%,-50%); pointer-events:none;
 }
+.sc-astro{opacity:.82}
+.sc-stelle{position:absolute; inset:0; width:100%; height:100%; display:block}
+/* L'orizzonte e' stirato di proposito: delle colline piu' larghe
+   sono ancora colline. Ancorato in fondo. */
+.sc-terra{
+  position:absolute; left:0; right:0; bottom:0; width:100%;
+  height:min(34vh,300px); display:block;
+}
+/* La tela delle particelle sta sopra la scena ferma ma sempre dentro
+   lo strato di sfondo: le foglie passano davanti alle colline, non
+   davanti alle domande. */
+.sc-tela{position:absolute; inset:0; display:block}
 /* La chip dice come mai il gioco ha cambiato faccia: senza, uno
    pensa di aver premuto qualcosa per sbaglio. */
 .skin-chip{

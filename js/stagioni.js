@@ -261,59 +261,10 @@
 (function (BT) {
   'use strict';
 
-  /* Emoji, come gli avatar e per le stesse ragioni: si vedono
-     ovunque, non pesano niente, non hanno padroni. */
-  var ADDOBBI = {
-    autunno:     ['🍂', '🍁', '🌰', '🍄', '🦔'],
-    halloween:   ['🎃', '👻', '🕸️', '🦇', '🕷️'],
-    inverno:     ['❄️', '⛄', '🧣', '🌨️', '🧊'],
-    natale:      ['🎄', '🎁', '⭐', '🔔', '🦌'],
-    carnevale:   ['🎭', '🎊', '🎉', '🤡', '🪅'],
-    pasqua:      ['🐣', '🥚', '🐇', '🌷', '🍫'],
-    primomaggio: ['🛠️', '🌹', '🎶', '👷', '⚙️'],
-    duegiugno:   ['🇮🇹', '🎺', '✈️', '🏛️', '🎖️'],
-    finescuola:  ['🎒', '📚', '🎉', '✏️', '🏖️'],
-    estate:      ['🌞', '🏖️', '🍉', '🩴', '🐚'],
-    compleanno:  ['🎂', '🎈', '🎁', '🎉', '🕯️']
-  };
-
-  /* Posizioni FISSE, non a caso: 'applica' gira a ogni cambio di
-     giocatore e di tema, e degli addobbi che saltano da una parte
-     all'altra a ogni passaggio sembrano un difetto. In percentuale,
-     cosi' valgono su qualunque schermo; stanno ai bordi perche' in
-     mezzo ci vanno le carte. [sinistra%, alto%, dimensione in rem] */
-  var POSTI = [
-    [3, 8, 2.1], [91, 14, 2.6], [7, 34, 1.7], [88, 44, 2.0],
-    [2, 62, 2.4], [93, 70, 1.8], [12, 88, 2.2], [82, 92, 2.5],
-    [48, 4, 1.6], [25, 96, 1.9]
-  ];
-
-  function addobba(veste) {
-    var vecchio = document.getElementById('bg-skin');
-    if (vecchio) vecchio.remove();
-    if (!veste) return;
-    var lista = ADDOBBI[veste.id];
-    if (!lista || !lista.length) return;
-
-    var box = document.createElement('div');
-    box.className = 'bg-skin';
-    box.id = 'bg-skin';
-    box.setAttribute('aria-hidden', 'true');
-    POSTI.forEach(function (p, i) {
-      var s = document.createElement('span');
-      s.textContent = lista[i % lista.length];
-      s.style.left = p[0] + '%';
-      s.style.top = p[1] + '%';
-      s.style.fontSize = p[2] + 'rem';
-      /* molto smorzati: devono farsi notare senza mettersi davanti
-         alle domande, che sono il motivo per cui uno e' qui */
-      s.style.opacity = (i % 2 ? 0.13 : 0.18);
-      box.appendChild(s);
-    });
-    /* in fondo al body: lo sfondo sta a z-index 0 come .bg-books */
-    document.body.appendChild(box);
-  }
-
+  /* La scenografia (js/scena.js) ha preso il posto delle dieci emoji
+     sparse ai bordi: un astro con l'alone, un orizzonte, e delle
+     particelle che si muovono. Qui si chiama e basta - come sono
+     fatte le scene sta tutto in quel file. */
   function chip(veste) {
     var vecchia = document.getElementById('skin-chip');
     if (vecchia) vecchia.remove();
@@ -405,7 +356,7 @@
       var v = BT.skin.adesso(p, quando);
       if (v) document.body.dataset.skin = v.id;
       else delete document.body.dataset.skin;
-      addobba(v);
+      if (BT.scena) BT.scena.monta(v);
       chip(v);
       return v;
     }

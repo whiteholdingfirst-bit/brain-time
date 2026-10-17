@@ -1422,3 +1422,58 @@ a vicenda non sono una verifica.**
 > Regola che ne esce: quando una cosa esiste in due posti (una lista in JS e una regola nel CSS),
 > il controllo va fatto **incrociando i due posti**, non ricopiando uno dei due. Qui e' bastato
 > leggere gli `body[data-skin=...]` dal foglio e confrontarli con `BT.SBLOCCABILI.veste`.
+
+## La scenografia delle vesti (`js/scena.js`, 17/10/2026)
+
+Richiesta: *"vogliamo skin piu' accattivanti con grafica avanzata"*. Giusta: una veste era quattro
+colori piu' dieci emoji ferme ai bordi, e un cambio di palette si nota ma non fa sembrare il gioco
+un altro posto. Le emoji sono state **tolte** e sostituite da due strati:
+
+1. **una scena ferma**: un astro con l'alone, delle stelle, e un profilo all'orizzonte — colline,
+   montagne, alberi spogli, abeti, tetti, grattacieli, onde;
+2. **delle particelle in movimento** su canvas: foglie, neve, coriandoli, petali, bollicine,
+   scintille, pipistrelli, palloncini.
+
+> ⚠️ **Niente immagini, e non per pigrizia.** Un PNG per undici vesti vuol dire megabyte da
+> scaricare sul telefono di un compagno di classe, piu' i diritti d'uso da verificare. Qui e' tutto
+> geometria: pesa qualche kilobyte e si ridimensiona da solo.
+
+I colori si leggono dalle **variabili CSS** della veste in corso (`colore('neon')`), non si
+riscrivono nel JS: l'unico posto dove stanno i colori resta il foglio di stile.
+
+### Le particelle sono un di piu', la scena no
+Con `prefers-reduced-motion` le particelle **non vengono proprio create** (`BT.juice.ok()`) e
+resta solo la scena: il gioco e' bello lo stesso. Il ciclo si ferma su `visibilitychange`, e al
+ritorno riparte azzerando il tempo — se no il primo `dt` varrebbe mezz'ora e tutte le particelle
+sparirebbero in un fotogramma. Il `dt` e' comunque tagliato a 50 ms.
+
+Il numero di particelle scende del 45% sotto i 520px: **un effetto che scatta e' peggio di nessun
+effetto**, come gia' scritto per `juice.js`. La densita' dei pixel e' tagliata a 2.
+
+### ⚠️ Tre trappole di geometria, tutte viste a video
+
+**La luna era un'ellisse.** Un solo `<svg viewBox="0 0 1000 1000" preserveAspectRatio="none">` su
+uno schermo 375x812 viene stirato in verticale, e i cerchi diventano ovali. Ora l'astro e il suo
+alone sono **elementi normali con `aspect-ratio:1`**: un cerchio resta un cerchio ovunque.
+L'orizzonte, invece, resta un SVG stirato **di proposito** e ancorato in fondo — delle colline
+piu' larghe sono ancora colline.
+
+**I tronchi degli alberi diventavano fili.** La fascia dell'orizzonte mappa 1000 unita' sulla
+larghezza e 200 sull'altezza: su un telefono l'orizzontale e' schiacciata **3,7 volte**, su un
+computer **1,1**. Senza compensare, gli alberi erano giusti sul computer e invisibili sul telefono.
+I generatori prendono un fattore `k` **misurato** da larghezza e altezza vere, e moltiplicano
+larghezze e passi. Indovinare un numero fisso avrebbe sistemato uno schermo e rotto l'altro.
+
+**`window.innerWidth` puo' valere 0.** Nel pannello di anteprima vale proprio 0, e una tela 0x0 non
+disegna niente **senza dare nessun errore**. La misura si prende dal riquadro
+(`getBoundingClientRect`), con ripiego su `innerWidth`, poi su `clientWidth`, poi su 360x640, e si
+tiene in `larg`/`alt` invece di rileggerla ogni volta.
+
+> Conseguenza sull'ordine delle operazioni: in `monta()` il riquadro si attacca **vuoto**, poi si
+> misura, poi si disegna. Prima si disegnava e si attaccava dopo, e le misure erano tutte zero.
+
+### Collaudo
+I fotogrammi non arrivano mai nel pannello, quindi le particelle non si disegnano da sole. Per
+vederle si sostituisce `requestAnimationFrame` con una versione che chiama subito la funzione,
+**con un tetto di giri**: `ciclo()` si richiama da solo e senza il tetto la pagina si pianta.
+Provate tutte e dodici: nessun errore, e la tela viene davvero dipinta in tutte.
